@@ -1,4 +1,4 @@
-기존의 music_player의 사이트를 라라벨로 재구성함과, 디자인 리뉴얼
+기존의 [music_player]([링크 주소](https://github.com/D-opamin-e/music_player))의 사이트를 라라벨로 재구성함과, 디자인 리뉴얼
 
 2025-04-06
 
