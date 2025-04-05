@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Song;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -15,7 +16,6 @@ class MusicController extends Controller
         $userIPSanitized = str_replace(':', '_', $userIP);
         $userPlaylistFile = storage_path('app/playlist/' . $userIPSanitized . '.json');
 
-        // ✅ 항상 새 재생목록 생성: 기존 파일 삭제
         if (File::exists($userPlaylistFile)) {
             File::delete($userPlaylistFile);
         }
@@ -88,7 +88,7 @@ class MusicController extends Controller
         return view('welcome', ['playlist' => $playlist]);
     }
 
-    // ✅ 오디오 스트리밍 with Range 지원
+    // Range 강제
     public function stream(Request $request, $filename)
     {
         $filePath = public_path("music/{$filename}");
@@ -148,46 +148,60 @@ class MusicController extends Controller
             readfile($filePath);
         }, 200, $headers);
     }
+
+    // Node.js 스크립트 실행 
     public function updatePlaylist(Request $request)
     {
-        $userIP = $request->ip(); // 사용자 IP 가져오기
+        $userIP = $request->ip();
         $filename = storage_path("app/playlist/{$userIP}.json");
-    
-        // Node.js 스크립트 실행
-        $scriptPath = base_path('now_playlist_update.js'); // 또는 'node_scripts/now_playlist_update.js'
+
+        $scriptPath = base_path('now_playlist_update.js');
         $command = "node {$scriptPath} {$userIP}";
         $output = shell_exec($command);
-    
-        // 로그 저장
+
         file_put_contents(storage_path('logs/shell_exec_log.txt'), "Command: $command\nOutput: $output\n", FILE_APPEND);
-    
-        // 출력에서 JSON 추출
+
         $jsonStart = strpos($output, '{"');
         $jsonEnd = strrpos($output, '}');
         $jsonString = $jsonStart !== false && $jsonEnd !== false
             ? substr($output, $jsonStart, $jsonEnd - $jsonStart + 1)
             : '';
-    
+
         $resultArray = json_decode($jsonString, true);
-    
+
         $time = now()->format('m월 d일 H시 i분 s초');
         $outputLines = explode("\n", $output);
         $firstLine = $outputLines[0] ?? 'No output';
-    
+
         if (isset($resultArray['log'])) {
             $logArray = $resultArray['log'];
             $outputString = '';
-    
+
             foreach ($logArray as $log) {
                 $outputString .= "신규 추가된 곡: $log\n";
             }
-    
+
             if (!empty($outputString)) {
                 return response($outputString)->header('Content-Type', 'text/plain; charset=utf-8');
             }
         }
-    
+
         return response("$time / $firstLine")->header('Content-Type', 'text/plain; charset=utf-8');
     }
+
+    public function updatePlayCount(Request $request)
+    {
+        $index = $request->input('index');
     
+        $song = Song::where('index_number', $index)->first();
+    
+        if ($song) {
+            $song->increment('play_count'); // play_count 컬럼을 DB에서 +1
+            return response()->json(['message' => '✅ 재생 수 업데이트 완료']);
+        }
+    
+        return response()->json(['message' => '❌ 곡을 찾을 수 없습니다'], 404);
+    }
+    
+
 }
