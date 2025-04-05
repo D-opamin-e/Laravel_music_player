@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
           integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
           crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <style>
         .content {
-            padding-top: 70px; /* header 가림 방지 70픽셀 적당? */
+            padding-top: 70px;
         }
     </style>
 @endpush
@@ -27,20 +27,13 @@
             </div>
             <div id="totalSongs">
                 <small>전체 곡 개수:
-                    @isset($playlist)
-                        {{ is_countable($playlist) ? count($playlist) : 0 }}
-                    @else
-                        0
-                    @endisset
-                    곡
+                    {{ isset($playlist) && is_countable($playlist) ? count($playlist) : 0 }} 곡
                 </small>
             </div>
         </div>
 
         <div class="content">
-            <ul id="songList">
-                <!-- JS로 렌더링되서 내용 필요없음 -->
-            </ul>
+            <ul id="songList"></ul>
         </div>
     </div>
 
@@ -60,23 +53,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
-            if (playlist.length === 0) return;
+            const mappedChannels = @json($mappedChannels);
+            if (!playlist.length) return;
 
             let currentSongIndex = 0;
             const audioPlayer = document.getElementById('audioPlayer');
             const songTitle = document.getElementById('songTitle');
             const songList = document.getElementById('songList');
-            const searchInput = document.getElementById('searchInput');
+            const searchInput = document.querySelector('#searchInput');
 
             if (!audioPlayer) return;
 
-            // 노래 재생 함수
             window.playSong = function (index) {
                 if (!playlist[index]) return;
 
-                let song = playlist[index];
-                let audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
-                let fullAudioSrc = location.origin + audioSrc;
+                const song = playlist[index];
+                const audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
+                const fullAudioSrc = location.origin + audioSrc;
 
                 if (audioPlayer.src !== fullAudioSrc) {
                     audioPlayer.src = audioSrc;
@@ -86,13 +79,11 @@
                     .then(() => console.log("✅ 재생됨:", song.title))
                     .catch(e => console.error("❌ 재생 오류:", e));
 
-                // 모든 song-item에서 alert-primary 제거, alert-light 추가
                 document.querySelectorAll('.song-item').forEach(el => {
                     el.classList.remove('alert-primary');
                     el.classList.add('alert-light');
                 });
 
-                // 현재 곡만 alert-primary로
                 const currentItem = document.getElementById(`song-${index}`);
                 if (currentItem) {
                     currentItem.classList.remove('alert-light');
@@ -103,7 +94,6 @@
                 currentSongIndex = index;
                 document.title = `${song.title} - ${song.channel}`;
 
-                // ✅ 재생수 업데이트
                 fetch('/update-play-count', {
                     method: 'POST',
                     headers: {
@@ -112,23 +102,25 @@
                     },
                     body: JSON.stringify({ index: song.index })
                 })
-                .then(res => res.json())
-                .then(data => console.log(data.message))
-                .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
+                .then(res => {
+                    if (!res.ok) throw new Error("서버 응답 오류");
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data.message);
+                })
+                .catch(err => {
+                    console.error('❌ 재생 수 업데이트 실패:', err);
+                });
             };
 
-            // 다음 곡 재생
             window.playNext = function () {
                 currentSongIndex = (currentSongIndex + 1) % playlist.length;
                 window.playSong(currentSongIndex);
             };
 
-            // 곡 끝나면 다음 곡 재생
-            audioPlayer.addEventListener('ended', function () {
-                window.playNext();
-            });
+            audioPlayer.addEventListener('ended', window.playNext);
 
-            // 검색 후 렌더링 함수
             function renderSongs(filteredPlaylist) {
                 songList.innerHTML = '';
 
@@ -156,36 +148,41 @@
                 });
             }
 
-            // 검색 입력 시 필터링
-            searchInput.addEventListener('input', function () {
-                const keyword = this.value.trim().toLowerCase();
-                if (keyword === '') {
-                    renderSongs(playlist);
-                } else {
-                    const filtered = playlist.filter(song =>
-                        song.title.toLowerCase().includes(keyword) ||
-                        song.channel.toLowerCase().includes(keyword)
-                    );
-                    renderSongs(filtered);
-                }
-            });
+            // ✅ 검색 이벤트 핸들링 추가
+            if (searchInput) {
+                searchInput.addEventListener('input', function (e) {
+                    const searchQuery = e.target.value.trim();
 
-            // 재생목록 업데이트 버튼
+                    if (searchQuery.length === 0) {
+                        renderSongs(playlist);
+                        return;
+                    }
+
+                    fetch(`/search?q=${encodeURIComponent(searchQuery)}`)
+                        .then(res => res.json())
+                        .then(results => {
+                            const filtered = results.map(result => {
+                                return playlist.find(song => song.index === result.index_number);
+                            }).filter(Boolean);
+
+                            renderSongs(filtered);
+                        })
+                        .catch(err => {
+                            console.error("검색 요청 실패:", err);
+                        });
+                });
+            }
+
             document.getElementById("updateButton").addEventListener("click", function () {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "/update-playlist", true);
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        var response = xhr.responseText;
+                fetch("/update-playlist")
+                    .then(res => res.text())
+                    .then(response => {
                         alert(response);
                         console.log("🔁 서버 응답:", response);
-                        location.reload(); // 새로고침
-                    }
-                };
-                xhr.send();
+                        location.reload();
+                    });
             });
 
-            // 첫 곡 표시 및 전체 렌더링
             renderSongs(playlist);
             window.playSong(0);
         });

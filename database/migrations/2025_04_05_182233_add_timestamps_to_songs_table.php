@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('songs', function (Blueprint $table) {
+            $table->integer('index_number')->unique()->after('id');
+            $table->integer('play_count')->default(0)->after('index_number');
             $table->timestamps(); // created_at, updated_at 컬럼 추가
         });
     }
@@ -22,6 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('songs', function (Blueprint $table) {
+            $table->dropColumn(['index_number', 'play_count']);
             $table->dropTimestamps(); // created_at, updated_at 컬럼 제거
         });
     }

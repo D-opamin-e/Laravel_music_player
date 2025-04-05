@@ -7,9 +7,17 @@ use App\Models\Song;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Services\MappingService;
 
 class MusicController extends Controller
 {
+    protected $mappingService;
+
+    public function __construct(MappingService $mappingService)
+    {
+        $this->mappingService = $mappingService;
+    }
+
     public function index(Request $request)
     {
         $userIP = $request->ip();
@@ -67,9 +75,16 @@ class MusicController extends Controller
             }
         }
 
+        $mappedChannels = [];
+        foreach ($song_list as $song) {
+            $mappedChannels[$song->channel] = $this->mappingService->getMappedValue($song->channel);
+        }
+
         $shuffleplaylist = [];
         $playNum = 1;
         foreach ($song_list as $song) {
+            $channelNormalized = $this->mappingService->normalizeQuery($song->channel);
+
             $shuffleplaylist[] = [
                 'play_num' => $playNum++,
                 'id' => $song->id,
@@ -77,7 +92,7 @@ class MusicController extends Controller
                 'index' => $song->index_number,
                 'play_count' => $song->play_count,
                 'bpm' => $song->BPM,
-                'channel' => $song->channel,
+                'channel' => $channelNormalized,
             ];
         }
 
@@ -85,10 +100,12 @@ class MusicController extends Controller
 
         $playlist = json_decode(File::get($userPlaylistFile));
 
-        return view('welcome', ['playlist' => $playlist]);
+        return view('welcome', [
+            'playlist' => $playlist,
+            'mappedChannels' => $mappedChannels,
+        ]);
     }
 
-    // Range 강제
     public function stream(Request $request, $filename)
     {
         $filePath = public_path("music/{$filename}");
@@ -139,17 +156,15 @@ class MusicController extends Controller
                         flush();
                     }
                     fclose($fp);
-                }, 206, $headers); // Partial Content
+                }, 206, $headers);
             }
         }
 
-        // Range 헤더가 없을 경우 전체 파일 제공
         return response()->stream(function () use ($filePath) {
             readfile($filePath);
         }, 200, $headers);
     }
 
-    // Node.js 스크립트 실행 
     public function updatePlaylist(Request $request)
     {
         $userIP = $request->ip();
@@ -192,16 +207,40 @@ class MusicController extends Controller
     public function updatePlayCount(Request $request)
     {
         $index = $request->input('index');
-    
-        $song = Song::where('index_number', $index)->first();
-    
-        if ($song) {
-            $song->increment('play_count'); // play_count 컬럼을 DB에서 +1
-            return response()->json(['message' => '✅ 재생 수 업데이트 완료']);
-        }
-    
-        return response()->json(['message' => '❌ 곡을 찾을 수 없습니다'], 404);
-    }
-    
 
+        $song = Song::where('index_number', $index)->first();
+
+        if ($song) {
+            $song->increment('play_count');
+            return response()->json(['message' => 'MusicController.php 재생 수 업데이트 완료']);
+        }
+
+        return response()->json(['message' => 'MusicController.php 곡을 찾을 수 없습니다'], 404);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+
+        $mapped = $this->mappingService->map($query);
+        $reverseMapped = $this->mappingService->reverseMap($query);
+        $aliases = $this->mappingService->getAliasesForValue($query);
+
+        $searchTerms = array_filter([
+            $query,
+            $mapped,
+            $reverseMapped,
+            ...$aliases
+        ]);
+
+        $searchTerms = array_unique($searchTerms);
+
+        $songs = Song::where(function($q) use ($searchTerms) {
+            foreach ($searchTerms as $term) {
+                $q->orWhere('channel', 'like', "%$term%");
+            }
+        })->get();
+
+        return response()->json($songs);
+    }
 }
