@@ -52,11 +52,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
+            let playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
+            const fullPlaylist = [...playlist];
             const mappedChannels = @json($mappedChannels);
-            if (!playlist.length) return;
 
+            let searchResults = null;
             let currentSongIndex = 0;
+
             const audioPlayer = document.getElementById('audioPlayer');
             const songTitle = document.getElementById('songTitle');
             const songList = document.getElementById('songList');
@@ -102,20 +104,31 @@
                     },
                     body: JSON.stringify({ index: song.index })
                 })
-                .then(res => {
-                    if (!res.ok) throw new Error("서버 응답 오류");
-                    return res.json();
-                })
-                .then(data => {
-                    console.log(data.message);
-                })
-                .catch(err => {
-                    console.error('❌ 재생 수 업데이트 실패:', err);
-                });
+                .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
+                .then(data => console.log(data.message))
+                .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
             };
 
             window.playNext = function () {
-                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                currentSongIndex++;
+
+                if (searchResults && currentSongIndex < playlist.length) {
+                    window.playSong(currentSongIndex);
+                    return;
+                }
+
+                const lastPlayedSong = playlist[currentSongIndex - 1];
+
+                document.getElementById("searchInput").value = "";
+                searchResults = null;
+                playlist = [...fullPlaylist];
+
+                const realIndex = playlist.findIndex(
+                    song => song.title === lastPlayedSong.title && song.channel === lastPlayedSong.channel
+                );
+
+                currentSongIndex = (realIndex + 1) % playlist.length;
+                renderSongs(playlist);
                 window.playSong(currentSongIndex);
             };
 
@@ -148,12 +161,13 @@
                 });
             }
 
-            // ✅ 검색 이벤트 핸들링 추가
             if (searchInput) {
                 searchInput.addEventListener('input', function (e) {
                     const searchQuery = e.target.value.trim();
 
                     if (searchQuery.length === 0) {
+                        searchResults = null;
+                        playlist = [...fullPlaylist];
                         renderSongs(playlist);
                         return;
                     }
@@ -161,11 +175,12 @@
                     fetch(`/search?q=${encodeURIComponent(searchQuery)}`)
                         .then(res => res.json())
                         .then(results => {
-                            const filtered = results.map(result => {
-                                return playlist.find(song => song.index === result.index_number);
+                            searchResults = results.map(result => {
+                                return fullPlaylist.find(song => song.index === result.index_number);
                             }).filter(Boolean);
 
-                            renderSongs(filtered);
+                            playlist = searchResults;
+                            renderSongs(playlist);
                         })
                         .catch(err => {
                             console.error("검색 요청 실패:", err);

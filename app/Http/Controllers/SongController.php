@@ -2,7 +2,8 @@
 public function updatePlayCount(Request $request)
 {
     $index = $request->input('index');
-    
+
+    // 예시) 해당 index의 곡을 찾아 재생 수 1 증가
     $song = Song::where('index', $index)->first();
 
     if ($song) {

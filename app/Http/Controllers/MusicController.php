@@ -221,26 +221,33 @@ class MusicController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-
+    
+        if (empty(trim($query))) {
+            // 검색어가 없으면 전체 곡 반환
+            return response()->json(Song::all());
+        }
+    
         $mapped = $this->mappingService->map($query);
         $reverseMapped = $this->mappingService->reverseMap($query);
         $aliases = $this->mappingService->getAliasesForValue($query);
-
+    
         $searchTerms = array_filter([
             $query,
             $mapped,
             $reverseMapped,
             ...$aliases
         ]);
-
+    
         $searchTerms = array_unique($searchTerms);
-
+    
         $songs = Song::where(function($q) use ($searchTerms) {
             foreach ($searchTerms as $term) {
-                $q->orWhere('channel', 'like', "%$term%");
+                $q->orWhere('channel', 'like', "%$term%")
+                  ->orWhere('title', 'like', "%$term%");
             }
         })->get();
-
+    
         return response()->json($songs);
     }
+    
 }

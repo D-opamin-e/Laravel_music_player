@@ -79,13 +79,12 @@ class MappingService
 
     public function normalizeQuery(string $query): string
     {
-        // ytdl에서 음원 로컬 다운시, 작곡가 - Topic 제거
         $query = preg_replace('/\s*-\s*Topic$/i', '', $query);
         return trim($query);
     }
 
     public function getMappedValue(string $query): ?string
     {
-        return $this->map($query); 
+        return $this->map($query); // 수정된 map() 사용
     }
 }
