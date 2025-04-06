@@ -25,5 +25,5 @@
 4. 검색돤 노래 재생 완료 후 관련 작업
 
 
-<img src="<https://media.discordapp.net/attachments/895639765402132490/1358328768153784372/A8BBB9F9-B703-4445-BA09-807CEDD224B8.jpg?ex=67f371be&is=67f2203e&hm=ece68c11863bb3a64483b65861b1d6701fbb890ffa96df3655730aa1ca4e77b9&>">
+<img src="..">
 <img src="https://media.discordapp.net/attachments/895639765402132490/1358328768153784372/A8BBB9F9-B703-4445-BA09-807CEDD224B8.jpg?ex=67f371be&is=67f2203e&hm=ece68c11863bb3a64483b65861b1d6701fbb890ffa96df3655730aa1ca4e77b9&"
