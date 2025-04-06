@@ -21,3 +21,14 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# 추가 제외 대상
+node_modules/
+public/
+Laravel_backup/
+.env
+BPM.py
+channel.js
+DB_check.bat
+now_playlist_update.js
+dbModule.js
