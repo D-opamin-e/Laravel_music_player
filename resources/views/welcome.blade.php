@@ -105,7 +105,21 @@
                     body: JSON.stringify({ index: song.index })
                 })
                 .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
-                .then(data => console.log(data.message))
+                .then(data => {
+                    console.log(data.message);
+                    const badge = document.querySelector(`#song-${index} .badge`);
+                    if (badge) {
+                        const currentCount = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
+                        badge.innerText = `${currentCount + 1}회`;
+
+                        badge.classList.remove('bg-secondary');
+                        badge.classList.add('bg-success');
+                        setTimeout(() => {
+                            badge.classList.remove('bg-success');
+                            badge.classList.add('bg-secondary');
+                        }, 1500);
+                    }
+                })
                 .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
             };
 
