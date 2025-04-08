@@ -8,8 +8,14 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-04-09</strong></summary>
+  <ul>
+    <li>➕ <strong>ADD</strong>: 기기별로 특정 노래 찜(좋아요)기능</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-08</strong></summary>
-  <p>⏱️ <strong>AM 02:00</strong></p>
   <ul>
     <li>➕ <strong>ADD</strong>: 실시간 재생 횟수 업데이트 기능 구현</li>
   </ul>
@@ -17,7 +23,6 @@
 
 <details>
   <summary><strong>2025-04-07</strong></summary>
-  <p>⏱️ <strong>AM 02:00</strong></p>
   <ul>
     <li>🛠️ <strong>Fixed</strong>: `playNext` 함수에 전체 리스트 이어서 재생되도록 로직 추가</li>
     <li>🛠️ <strong>Fixed</strong>: 검색된 곡들을 모두 들은 후, 전체 플레이리스트에서 이어서 다음 곡을 재생하도록 해결</li>
@@ -29,20 +34,14 @@
 
 <details>
   <summary><strong>2025-04-06</strong></summary>
-
-  <p>⏱️ <strong>AM 06:00</strong></p>
   <ul>
     <li>🔍 검색 관련 매핑 기능 추가 <em>(추후 추가 수정 예정)</em></li>
   </ul>
-
-  <p>⏱️ <strong>AM 04:00</strong></p>
   <ul>
     <li>🔍 검색 기능 구현</li>
     <li>📄 재생목록 업데이트 기능 구현</li>
     <li>🔁 재생 횟수 업데이트 기능 구현</li>
   </ul>
-
-  <p>⏱️ <strong>AM 01:00</strong></p>
   <ul>
     <li>🔧 전체 업데이트 기능 구현</li>
     <li>🎨 디자인 리뉴얼</li>
@@ -63,7 +62,8 @@
   <li>상/하단 UI 개선</li>
 <li><s>검색된 노래 재생 후 후처리 기능</s></li>
     - <code>2025-04-07</code>일 개선 완료 
-  <li>특정 노래 <code>찜, 좋아요</code> 기능</li>
+  <li><s>특정 노래 <code>찜, 좋아요</code> 기능</s></li>
+    - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
   <li>매핑 기능 고도화<br>
     - 기존: <code>.txt</code> 기반<br>
     - 개선: <strong>DB 테이블 기반</strong> 관리
@@ -80,4 +80,3 @@
   >
 </p>
 <p><em>좌측: Laravel 기반 리뉴얼 버전 | 우측: 기존 프로젝트</em></p>
->>>>>>> 2951d18af6f9234ec06fcccfa50ed906f7693c35

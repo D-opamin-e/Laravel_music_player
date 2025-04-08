@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Song;
+use App\Models\Favorite;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -20,9 +21,15 @@ class MusicController extends Controller
 
     public function index(Request $request)
     {
-        $userIP = $request->ip();
+        $userIP = $request->header('X-Forwarded-For') ?? $request->ip();
+        $favorites = Favorite::where('ip_address', $userIP)->pluck('song_index')->toArray();
         $userIPSanitized = str_replace(':', '_', $userIP);
         $userPlaylistFile = storage_path('app/playlist/' . $userIPSanitized . '.json');
+
+
+        logger("Current IP: $userIP");
+        logger("Favorites loaded: " . json_encode($favorites));
+
 
         if (File::exists($userPlaylistFile)) {
             File::delete($userPlaylistFile);
@@ -103,6 +110,8 @@ class MusicController extends Controller
         return view('welcome', [
             'playlist' => $playlist,
             'mappedChannels' => $mappedChannels,
+            'favorites' => $favorites,
+            'favorited' => $favorites,
         ]);
     }
 
@@ -184,7 +193,7 @@ class MusicController extends Controller
 
         $resultArray = json_decode($jsonString, true);
 
-        $time = now()->format('m월 d일 H시 i분 s초');
+        $time = now()->format('m\uc6d4 d\uc77c H\uc2dc i\ubd84 s\ucd08');
         $outputLines = explode("\n", $output);
         $firstLine = $outputLines[0] ?? 'No output';
 
@@ -193,7 +202,7 @@ class MusicController extends Controller
             $outputString = '';
 
             foreach ($logArray as $log) {
-                $outputString .= "신규 추가된 곡: $log\n";
+                $outputString .= "\uc2e0\uaddc \ucd94\uac00\ub41c \uace1: $log\n";
             }
 
             if (!empty($outputString)) {
@@ -221,33 +230,58 @@ class MusicController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-    
+
         if (empty(trim($query))) {
-            // 검색어가 없으면 전체 곡 반환
             return response()->json(Song::all());
         }
-    
+
         $mapped = $this->mappingService->map($query);
         $reverseMapped = $this->mappingService->reverseMap($query);
         $aliases = $this->mappingService->getAliasesForValue($query);
-    
+
         $searchTerms = array_filter([
             $query,
             $mapped,
             $reverseMapped,
             ...$aliases
         ]);
-    
+
         $searchTerms = array_unique($searchTerms);
-    
+
         $songs = Song::where(function($q) use ($searchTerms) {
             foreach ($searchTerms as $term) {
                 $q->orWhere('channel', 'like', "%$term%")
-                  ->orWhere('title', 'like', "%$term%");
+                  ->orWhere('title', 'like', "%$term%")
+                  ;
             }
         })->get();
-    
+
         return response()->json($songs);
     }
-    
+
+    public function toggleFavorite(Request $request)
+    {
+        $index = $request->input('index');
+        $ip = $request->header('X-Forwarded-For') ?? $request->ip();
+
+        $favorite = Favorite::where('ip_address', $ip)->where('song_index', $index)->first();
+
+        if ($favorite) {
+            $favorite->delete();
+            return response()->json(['status' => 'removed']);
+        } else {
+            Favorite::create([
+                'ip_address' => $ip,
+                'song_index' => $index,
+            ]);
+            return response()->json(['status' => 'added']);
+        }
+    }
+
+    public function listFavorites(Request $request)
+    {
+        $ip = $request->header('X-Forwarded-For') ?? $request->ip();
+        $favorites = Favorite::where('ip_address', $ip)->pluck('song_index')->toArray();
+        return response()->json($favorites);
+    }
 }

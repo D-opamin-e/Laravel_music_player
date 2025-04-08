@@ -15,6 +15,19 @@
         .content {
             padding-top: 70px;
         }
+
+        .favorite-btn {
+            border: none;
+            background: none;
+            font-size: 1.2rem;
+            color: gray;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .favorite-btn.active {
+            color: gold;
+        }
     </style>
 @endpush
 
@@ -55,6 +68,7 @@
             let playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
             const fullPlaylist = [...playlist];
             const mappedChannels = @json($mappedChannels);
+            const favoritedIndexes = @json($favorites ?? []).map(i => Number(i));
 
             let searchResults = null;
             let currentSongIndex = 0;
@@ -65,6 +79,7 @@
             const searchInput = document.querySelector('#searchInput');
 
             if (!audioPlayer) return;
+            
 
             window.playSong = function (index) {
                 if (!playlist[index]) return;
@@ -106,18 +121,10 @@
                 })
                 .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
                 .then(data => {
-                    console.log(data.message);
                     const badge = document.querySelector(`#song-${index} .badge`);
                     if (badge) {
                         const currentCount = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
                         badge.innerText = `${currentCount + 1}회`;
-
-                        badge.classList.remove('bg-secondary');
-                        badge.classList.add('bg-success');
-                        setTimeout(() => {
-                            badge.classList.remove('bg-success');
-                            badge.classList.add('bg-secondary');
-                        }, 1500);
                     }
                 })
                 .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
@@ -125,14 +132,12 @@
 
             window.playNext = function () {
                 currentSongIndex++;
-
                 if (searchResults && currentSongIndex < playlist.length) {
                     window.playSong(currentSongIndex);
                     return;
                 }
 
                 const lastPlayedSong = playlist[currentSongIndex - 1];
-
                 document.getElementById("searchInput").value = "";
                 searchResults = null;
                 playlist = [...fullPlaylist];
@@ -152,6 +157,8 @@
                 songList.innerHTML = '';
 
                 filteredPlaylist.forEach((song) => {
+                    // console.log("🎯 song.index =", song.index);
+                    // console.log("⭐ favoritedIndexes =", favoritedIndexes);
                     const originalIndex = playlist.findIndex(s =>
                         s.title === song.title && s.channel === song.channel
                     );
@@ -162,14 +169,39 @@
                     songDiv.id = `song-${originalIndex}`;
                     songDiv.onclick = () => playSong(originalIndex);
 
+                    const leftDiv = document.createElement('div');
+                    leftDiv.classList.add('d-flex', 'align-items-center');
+
+                    const favoriteBtn = document.createElement('button');
+                    favoriteBtn.className = 'favorite-btn';
+                    favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
+                    favoriteBtn.classList.toggle('active', favoritedIndexes.includes(Number(song.index)));
+                    favoriteBtn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        fetch('/toggle-favorite', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ index: song.index })
+                        }).then(res => res.json())
+                          .then(data => {
+                              favoriteBtn.classList.toggle('active', data.favorited);
+                          });
+                    });
+
                     const infoDiv = document.createElement('div');
                     infoDiv.innerHTML = `<strong>${song.title}</strong><br><small>${song.channel}</small>`;
+
+                    leftDiv.appendChild(favoriteBtn);
+                    leftDiv.appendChild(infoDiv);
 
                     const badgeSpan = document.createElement('span');
                     badgeSpan.className = 'badge bg-secondary';
                     badgeSpan.innerText = `${song.play_count}회`;
 
-                    songDiv.appendChild(infoDiv);
+                    songDiv.appendChild(leftDiv);
                     songDiv.appendChild(badgeSpan);
                     songList.appendChild(songDiv);
                 });

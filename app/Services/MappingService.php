@@ -13,7 +13,7 @@ class MappingService
 
     protected function loadMappings()
     {
-        $filePath = storage_path('app/Mapping.txt'); 
+        $filePath = storage_path('app/Mapping.txt'); // 실제 경로 확인 필요
 
         if (!file_exists($filePath)) {
             return;
@@ -79,6 +79,7 @@ class MappingService
 
     public function normalizeQuery(string $query): string
     {
+        // YouTube 스타일의 suffix 제거
         $query = preg_replace('/\s*-\s*Topic$/i', '', $query);
         return trim($query);
     }
