@@ -12,53 +12,125 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <style>
-        .content {
+             .content {
             padding-top: 70px;
+        }
+        
+        body {
+            background: linear-gradient(to right, #f9f9f9, #e3eafc);
+        }
+
+        #playlistContainer {
+            max-width: 720px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        #searchInput {
+            width: 70%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        #updateButton {
+            border-radius: 25px;
+        }
+
+        .song-item {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .song-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .song-item.active {
+            background-color: #e7f1ff;
+            border-left: 5px solid #007bff;
         }
 
         .favorite-btn {
             border: none;
             background: none;
-            font-size: 1.2rem;
-            color: gray;
-            cursor: pointer;
-            margin-right: 10px;
+            font-size: 1.3rem;
+            color: #d3d3d3;
+            margin-right: 12px;
+            transition: color 0.3s ease;
         }
 
         .favorite-btn.active {
             color: gold;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 6px 10px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 12px;
+        }
+
+        #audioPlayerContainer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid #ddd;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #songTitle {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        audio {
+            width: 300px;
         }
     </style>
 @endpush
 
 @section('content')
     <div id="playlistContainer">
-        <div class="header">
+        <div class="header mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <input type="text" id="searchInput" placeholder="노래 제목을 검색하세요!">
                 <button class="btn btn-outline-dark" id="updateButton">재생목록 업데이트</button>
             </div>
-            <div id="totalSongs">
-                <small>전체 곡 개수:
-                    {{ isset($playlist) && is_countable($playlist) ? count($playlist) : 0 }} 곡
-                </small>
+            <div class="mt-2 text-muted">
+                전체 곡 개수: <strong>{{ isset($playlist) && is_countable($playlist) ? count($playlist) : 0 }} 곡</strong>
             </div>
         </div>
 
         <div class="content">
-            <ul id="songList"></ul>
+            <ul id="songList" class="list-unstyled"></ul>
         </div>
     </div>
 
     <div id="audioPlayerContainer">
         <div id="audioInfo">
-            <p id="songTitle"></p>
+            <p id="songTitle">재생 중인 곡 없음</p>
         </div>
         <audio id="audioPlayer" controls preload="metadata">
             Your browser does not support the audio element.
         </audio>
     </div>
 @endsection
+
+@push('scripts')
+{{-- 기존 JS는 그대로 유지 --}}
+@endpush
+
 
 @push('scripts')
     <script src="{{ asset('CSS/jquery-3.6.4.js') }}"></script>

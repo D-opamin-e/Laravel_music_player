@@ -11,6 +11,7 @@
   <summary><strong>2025-04-09</strong></summary>
   <ul>
     <li>➕ <strong>ADD</strong>: 기기별로 특정 노래 찜(좋아요)기능</li>
+    <li>🛠️ <strong>Fixed</strong>: UI 수정</li>
   </ul>
 </details>
 
