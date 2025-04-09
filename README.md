@@ -6,15 +6,16 @@
 <hr>
 
 <h2>📌 수정 내역</h2>
-
 <details>
   <summary><strong>2025-04-10</strong></summary>
   <ul>
-    <li>🛠️ <strong>Fixed</strong>: `UI'개선</li>
-        <li>➕ <strong>ADD</strong>:기기 별로(찜) 기능 필터링</li>
-            <li>➕ <strong>ADD</strong>: 재생중인 곡의 Storage Cover  추가</li>
+    <li>➕ <strong>ADD</strong>: 햄버거 태그 별 기능 추가가</li>
+    <li>➕ <strong>ADD</strong>: 기기별로 찜(좋아요) 노래 조회</li>
+    <li>➕ <strong>ADD</strong>: UI 변경</li>
+    <li>➕ <strong>ADD</strong>: 우측에 Youtube의 썸네일 사용</li>
   </ul>
 </details>
+
 
 <details>
   <summary><strong>2025-04-09</strong></summary>
@@ -67,10 +68,4 @@
     - 2차: NoSQL 도입 고려
   </li>
   <li><s>실시간 재생 횟수 업데이트 기능</s></li>
-  - <code>2025-04-08</code>일 개선 완료 
-  <li>상/하단 UI 개선</li>
-<li><s>검색된 노래 재생 후 후처리 기능</s></li>
-    - <code>2025-04-07</code>일 개선 완료 
-  <li><s>특정 노래 <code>찜, 좋아요</code> 기능</s></li>
-    - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
 <p><em>좌측: Laravel 기반 리뉴얼 버전 | 우측: 기존 프로젝트</em></p>
