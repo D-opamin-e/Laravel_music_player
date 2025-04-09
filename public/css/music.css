@@ -1,208 +1,326 @@
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f8f9fa;
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #f9f9f9, #e3eafc);
+    color: #333;
+}
+.favorite-btn {
+    color: rgba(211, 211, 211);
+    background: none !important;
+    border: none;
+    outline: none;
+    margin-right: 8px;
+}
 
-        .content {
-            margin-top: 10px; /* 헤더 높이에 맞춰 여백 추가 */
-            overflow-y: auto;
-            height: calc(100vh - 70px); /* 헤더를 제외한 높이 */
-            padding-top: 10px; /* 헤더 바로 아래 여백 추가 */
-            margin-bottom: 100px; /* 헤더 높이에 맞춰 여백 추가 */
-        }
-        
+.favorite-btn.active i {
+    color: gold;
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
 
-        .playlist {
-            padding: 20px;
-        }
+.content {
+    margin-top: 10px; /* 헤더 높이에 맞춰 여백 추가 */
+    overflow-y: auto;
+    height: calc(100vh - 70px); /* 헤더를 제외한 높이 */
+    padding-top: 80px; /* header 가림 방지 80픽셀 적당? */
+    margin-bottom: 100px; /* 헤더 높이에 맞춰 여백 추가 */
+}
 
-        .playlist-item {
-            margin-bottom: 10px;
-        }
-        .search {
-            position: relative;
-            width: 300px;
-          }
-          
-          input {
-            width: 50%;
-            border: 1px solid #bbb;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 14px;
-          }
-          
-          img {
-            position: absolute;
-            width: 17px;
-            top: 10px;
-            right: 12px;
-            margin: 0;
-          }
-        .play-icon::before {
-            content: '\25B6';  /* Unicode for the triangle symbol */
-            font-family: 'Font Awesome Free 5';
-            font-weight: 900;
-            margin-right: 5px;
-        }
-        .song-item.current-song {
-            background-color: #f8d7da; /* Bootstrap alert-danger background color */
-            color: #721c24; /* Bootstrap alert-danger text color */
-        }
-        .do_btn {
-            display: inline-block;
-            font-weight: 400;
-            color: #000000;
-            text-align: center;
-            vertical-align: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            background-color: transparent;
-            width: 32%;
-            border: 1px solid #bbb;
-            border-radius: 8px;
-            font-size: 14px;
-            padding: 10px 12px; /* 테두리 두께를 위아래 10px, 좌우 12px로 설정 */
-            padding: 0; /* 테두리 공간과 충돌을 방지하기 위해 패딩 제거 */
-            font-size: 1rem;
-            line-height: 2;
-            outline: none;
-        }
-        
-        @media (max-width: 400px) {
-            .do_btn {
-                border: solid 5px 6px; /* 작은 화면에서는 테두리 두께를 줄일 수 있음 */
-            }
-        }
-        
-        .do_btn:focus {
-            outline: none;
-        }        
-        
-        h1 {
-            font-size: 1.5em;
-            color: #000000;
-        }
 
-        #playlistContainer {
-            margin: 20px;
-        }
+.playlist {
+    padding: 20px;
+}
 
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+.playlist-item {
+    margin-bottom: 10px;
+}
+.search {
+    position: relative;
+    width: 300px;
+  }
+  
+  input {
+    width: 50%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  img {
+    position: absolute;
+    width: 17px;
+    top: 10px;
+    right: 12px;
+    margin: 0;
+  }
 
-        li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+  .thumbnail-wrapper {
+    position: relative;
+    margin-right: 10px;
+}
 
-        li:hover {
-            background-color: #f0f0f0;
-        }
 
-        li img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            margin-right: 10px;
-            border-radius: 5px;
-        }
+.play-icon::before {
+    content: '\25B6';  /* Unicode for the triangle symbol */
+    font-family: 'Font Awesome Free 5';
+    font-weight: 900;
+    margin-right: 5px;
+}
 
-        li span {
-            flex: 1;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
+/* .song-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+} */
 
-        #audioPlayerContainer {
-            color : black;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: white;
-            box-shadow: 0 -2px 5px rgb(255, 255, 255);
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-        }
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-        #audioPlayer {
-            width: 100%;
-        }
+.song-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.song-item.current-song {
+    background-color: #f3e8ff;  /* 포근한 연보라색 */
+    color: #3d1a83;             /* 어두운 보라 텍스트 */
+}
+.do_btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    width: 32%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 10px 12px; /* 테두리 두께를 위아래 10px, 좌우 12px로 설정 */
+    padding: 0; /* 테두리 공간과 충돌을 방지하기 위해 패딩 제거 */
+    font-size: 1rem;
+    line-height: 2;
+    outline: none;
+}
 
-        #audioInfo {
-            text-align: center;
-        }
+@media (max-width: 400px) {
+    .do_btn {
+        border: solid 5px 6px; /* 작은 화면에서는 테두리 두께를 줄일 수 있음 */
+    }
+}
 
-        #songTitle {
-            width: 150px;
-            /* max-width: 100%; */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: max-width 0.3s;
-        }
+.do_btn:focus {
+    outline: none;
+}        
 
-        #audioControls {
-            display: flex;
-            align-items: center;
-        }
+h1 {
+    font-size: 1.5em;
+    color: #000000;
+}
 
-        #shuffleButton,
-        #sequentialButton {
-            font-size: 20px;
-            color: #ff0000;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s;
-            margin-right: 10px;
-        }
+#playlistContainer {
+    max-width: 720px;
+    margin: auto;
+    padding: 30px;
+}
 
-        #shuffleButton:hover,
-        #sequentialButton:hover {
-            color: #cc0000;
-        }
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-        #fullScreenOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 1001;
-            align-items: center;
-            justify-content: center;
-        }
+li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+li:hover {
+    background-color: #f0f0f0;
+}
+
+li img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+li span {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#audioPlayerContainer {
+    color : black;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 -2px 5px rgb(255, 255, 255);
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+}
+
+#audioPlayer {
+    width: 100%;
+}
+
+#audioInfo {
+    display: flex;
+    text-align: center;
+}
+
+#songTitle {
+    font-weight: bold;
+    width: 150px;
+    /* max-width: 100%; */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: max-width 0.3s;
+}
+
+#audioControls {
+    display: flex;
+    align-items: center;
+}
+
+#shuffleButton,
+#sequentialButton {
+    font-size: 20px;
+    color: #ff0000;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+    margin-right: 10px;
+}
+
+#shuffleButton:hover,
+#sequentialButton:hover {
+    color: #cc0000;
+}
+
+#fullScreenOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+}
+
+body.menu-open #playlistContainer {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+.search-area {
+    position: relative;
+}
+
+#searchInput {
+    width: 0;
+    opacity: 0;
+    transition: width 0.4s ease, opacity 0.4s ease;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: white;
+}
+
+#searchInput.active {
+    width: 200px;
+    opacity: 1;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 20px;
+}
+
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#sideMenu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    padding: 85px 20px 20px 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 999;
+}
+
+#sideMenu.active {
+    left: 0;
+}
+
+#sideMenu ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sideMenu ul li {
+    margin: 15px 0;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+

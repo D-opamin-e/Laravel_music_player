@@ -3,321 +3,315 @@
 @section('title', '상재의 노래주머니')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('CSS/music.css?r=2') }}">
-    <link rel="stylesheet" href="{{ asset('CSS/bootstrap.css?r=2') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-          integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
-          crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
-    <style>
-             .content {
-            padding-top: 70px;
-        }
-        
-        body {
-            background: linear-gradient(to right, #f9f9f9, #e3eafc);
-        }
-
-        #playlistContainer {
-            max-width: 720px;
-            margin: auto;
-            padding: 30px;
-        }
-
-        #searchInput {
-            width: 70%;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 25px;
-            outline: none;
-        }
-
-        #updateButton {
-            border-radius: 25px;
-        }
-
-        .song-item {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .song-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .song-item.active {
-            background-color: #e7f1ff;
-            border-left: 5px solid #007bff;
-        }
-
-        .favorite-btn {
-            border: none;
-            background: none;
-            font-size: 1.3rem;
-            color: #d3d3d3;
-            margin-right: 12px;
-            transition: color 0.3s ease;
-        }
-
-        .favorite-btn.active {
-            color: gold;
-        }
-
-        .badge {
-            font-size: 0.9rem;
-            padding: 6px 10px;
-            background-color: #6c757d;
-            color: white;
-            border-radius: 12px;
-        }
-
-        #audioPlayerContainer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            border-top: 1px solid #ddd;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        #songTitle {
-            margin: 0;
-            font-weight: bold;
-        }
-
-        audio {
-            width: 300px;
-        }
-    </style>
+<link rel="stylesheet" href="{{ asset('CSS/music.css?r=3') }}">
+<link rel="stylesheet" href="{{ asset('CSS/bootstrap.css?r=2') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous">
 @endpush
 
 @section('content')
-    <div id="playlistContainer">
-        <div class="header mb-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <input type="text" id="searchInput" placeholder="노래 제목을 검색하세요!">
-                <button class="btn btn-outline-dark" id="updateButton">재생목록 업데이트</button>
+<!-- 사이드 메뉴 -->
+<div id="sideMenu">
+    <ul>
+        <li onclick="showMain()">메인</li>
+        <li onclick="showFavorites()">찜 곡</li>
+        <li onclick="updatePlaylist()">재생목록 업데이트</li>
+    </ul>
+</div>
+
+<div id="playlistContainer">
+    <div class="header mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
             </div>
-            <div class="mt-2 text-muted">
-                전체 곡 개수: <strong>{{ isset($playlist) && is_countable($playlist) ? count($playlist) : 0 }} 곡</strong>
+
+            <div class="search-area ml-auto d-flex align-items-center">
+                <input type="text" id="searchInput" class="form-control" placeholder="노래 제목을 검색하세요!" autocomplete="off">
+                <button id="searchToggle" class="btn search-icon">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
-
-        <div class="content">
-            <ul id="songList" class="list-unstyled"></ul>
+        <div class="mt-2 text-muted">
+            전체 곡 개수: <strong>{{ isset($playlist) && is_countable($playlist) ? count($playlist) : 0 }} 곡</strong>
         </div>
     </div>
 
-    <div id="audioPlayerContainer">
-        <div id="audioInfo">
-            <p id="songTitle">재생 중인 곡 없음</p>
-        </div>
-        <audio id="audioPlayer" controls preload="metadata">
-            Your browser does not support the audio element.
-        </audio>
+    <div class="content">
+        <ul id="songList" class="list-unstyled"></ul>
     </div>
+</div>
+
+<div id="audioPlayerContainer">
+    <div id="audioInfo" class="d-flex align-items-center">
+        <img id="coverImage" src="" alt="커버 이미지"
+             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+        <div>
+            <p id="songTitle" class="mb-0">재생 중인 곡 없음</p>
+        </div>
+    </div>
+    <audio id="audioPlayer" controls preload="metadata">
+        Your browser does not support the audio element.
+    </audio>
+</div>
 @endsection
 
 @push('scripts')
-{{-- 기존 JS는 그대로 유지 --}}
-@endpush
+<script src="{{ asset('CSS/jquery-3.6.4.js') }}"></script>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
+        const fullPlaylist = [...playlist];
+        const mappedChannels = @json($mappedChannels);
+        const favoritedIndexes = @json($favorites ?? []).map(i => Number(i));
+
+        let searchResults = null;
+        let currentSongIndex = 0;
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const songTitle = document.getElementById('songTitle');
+        const songList = document.getElementById('songList');
+        const searchInput = document.querySelector('#searchInput');
+        const coverImage = document.getElementById('coverImage');
+
+        function renderSongs(filteredPlaylist) {
+    songList.innerHTML = '';
+
+    filteredPlaylist.forEach((song) => {
+        const originalIndex = playlist.findIndex(s =>
+            s.title === song.title && s.channel === song.channel
+        );
+
+        const songDiv = document.createElement('div');
+        songDiv.className = 'alert alert-light song-item d-flex justify-content-between align-items-center py-2 px-3 my-1';
+        songDiv.style.cursor = 'pointer';
+        songDiv.id = `song-${originalIndex}`;
+        songDiv.onclick = () => playSong(originalIndex);
+
+        const leftDiv = document.createElement('div');
+        leftDiv.classList.add('d-flex', 'align-items-center', 'flex-grow-1');
+
+        // 썸네일 + 재생횟수 배지
+        const thumbnailWrapper = document.createElement('div');
+        thumbnailWrapper.style.position = 'relative';
+
+        const thumbnail = document.createElement('img');
+        thumbnail.src = `https://img.youtube.com/vi/${song.videoID}/hqdefault.jpg`;
+        thumbnail.alt = `${song.title} 썸네일`;
+        thumbnail.style.width = '50px';
+        thumbnail.style.height = '50px';
+        thumbnail.style.borderRadius = '5px';
+
+        thumbnail.style.objectFit = 'cover';
+        thumbnail.style.display = 'block';
+        thumbnail.style.alignSelf = 'center';
+        // thumbnail.style.maxWidth = '100%';
+        // thumbnail.style.maxHeight = '100%';
 
 
-@push('scripts')
-    <script src="{{ asset('CSS/jquery-3.6.4.js') }}"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
-            const fullPlaylist = [...playlist];
-            const mappedChannels = @json($mappedChannels);
-            const favoritedIndexes = @json($favorites ?? []).map(i => Number(i));
+        thumbnail.style.marginTop = '-3px';
 
-            let searchResults = null;
-            let currentSongIndex = 0;
+        const badge = document.createElement('span');
+        badge.className = 'badge badge-secondary';
+        badge.innerText = `${song.play_count}회`;
+        badge.style.fontSize = '0.65rem';
+        badge.style.borderRadius = '5px';
+        badge.style.marginRight = '10px';
+        badge.style.backgroundColor = '#6c757d';
+        badge.style.color = 'white';
 
-            const audioPlayer = document.getElementById('audioPlayer');
-            const songTitle = document.getElementById('songTitle');
-            const songList = document.getElementById('songList');
-            const searchInput = document.querySelector('#searchInput');
+        leftDiv.appendChild(thumbnail);
 
-            if (!audioPlayer) return;
-            
+        // 찜 버튼
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.className = 'favorite-btn';
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
+        favoriteBtn.classList.toggle('active', favoritedIndexes.includes(+song.index));
+        favoriteBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            fetch('/toggle-favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ index: song.index })
+            }).then(res => res.json())
+              .then(data => {
+                  favoriteBtn.classList.toggle('active', data.favorited);
+              });
+        });
 
-            window.playSong = function (index) {
-                if (!playlist[index]) return;
+        const infoDiv = document.createElement('div');
 
-                const song = playlist[index];
-                const audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
-                const fullAudioSrc = location.origin + audioSrc;
+        const titleDiv = document.createElement('div');
+        titleDiv.style.width = '500px';
+        titleDiv.style.textOverflow = 'ellipsis';
+        titleDiv.style.overflow = 'hidden';
+        titleDiv.style.whiteSpace = 'nowrap';
 
-                if (audioPlayer.src !== fullAudioSrc) {
-                    audioPlayer.src = audioSrc;
+        const title = document.createElement('strong');
+        title.textContent = song.title;
+        
+
+        titleDiv.appendChild(title);
+
+        const channel = document.createElement('small');
+        channel.textContent = song.channel;
+        channel.style.verticalAlign = 'middle';
+
+        infoDiv.appendChild(titleDiv);
+        infoDiv.appendChild(badge);
+        infoDiv.appendChild(channel);
+
+
+        
+
+        leftDiv.appendChild(thumbnailWrapper);
+        leftDiv.appendChild(favoriteBtn);
+        leftDiv.appendChild(infoDiv);
+
+        songDiv.appendChild(leftDiv);
+        songList.appendChild(songDiv);
+    });
+}
+
+
+        window.playSong = function (index) {
+            if (!playlist[index]) return;
+            const song = playlist[index];
+            currentSongIndex = index;
+
+            if (song && song.videoID && coverImage) {
+                coverImage.src = `https://img.youtube.com/vi/${song.videoID}/hqdefault.jpg`;
+            }
+
+            const audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
+            if (audioPlayer.src !== location.origin + audioSrc) {
+                audioPlayer.src = audioSrc;
+            }
+            audioPlayer.play().then(() => console.log("🎵 재생:", song.title));
+            songTitle.innerText = song.title;
+            document.title = `${song.title} - ${song.channel}`;
+
+            document.querySelectorAll('.song-item').forEach(item => {
+                item.classList.remove('current-song');
+            });
+            const currentDiv = document.getElementById(`song-${index}`);
+            if (currentDiv) {
+                currentDiv.classList.add('current-song');
+            }
+
+            fetch('/update-play-count', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ index: song.index })
+            })
+            .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
+            .then(data => {
+                const badge = document.querySelector(`#song-${index} .badge`);
+                if (badge) {
+                    const currentCount = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
+                    badge.innerText = `${currentCount + 1}회`;
                 }
+            })
+            .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
+        };
 
-                audioPlayer.play()
-                    .then(() => console.log("✅ 재생됨:", song.title))
-                    .catch(e => console.error("❌ 재생 오류:", e));
+        window.playNext = function () {
+            currentSongIndex++;
+            if (currentSongIndex >= playlist.length) {
+                location.reload();
+                return;
+            }
+            window.playSong(currentSongIndex);
+        };
 
-                document.querySelectorAll('.song-item').forEach(el => {
-                    el.classList.remove('alert-primary');
-                    el.classList.add('alert-light');
+        audioPlayer.addEventListener('ended', window.playNext);
+
+        window.toggleMenu = function () {
+            const menu = document.getElementById("sideMenu");
+            menu.classList.toggle("active");
+            document.body.classList.toggle("menu-open", menu.classList.contains("active"));
+        };
+
+        window.showMain = function () {
+            playlist = [...fullPlaylist];
+            renderSongs(playlist);
+            toggleMenu();
+        };
+
+        window.showFavorites = function () {
+            fetch('/favorites')
+                .then(res => res.json())
+                .then(latestFavorites => {
+                    playlist = fullPlaylist.filter(song => latestFavorites.includes(Number(song.index)));
+                    favoritedIndexes.length = 0;
+                    latestFavorites.forEach(i => favoritedIndexes.push(i));
+                    renderSongs(playlist);
+                    toggleMenu();
                 });
+        };
 
-                const currentItem = document.getElementById(`song-${index}`);
-                if (currentItem) {
-                    currentItem.classList.remove('alert-light');
-                    currentItem.classList.add('alert-primary');
-                }
+        window.updatePlaylist = function () {
+            alert("🔄 재생목록을 업데이트 중입니다...");
+            fetch("/update-playlist")
+                .then(res => res.text())
+                .then(response => {
+                    alert("✅ 업데이트 완료!\n\n" + response);
+                });
+            toggleMenu();
+        };
 
-                songTitle.innerText = song.title;
-                currentSongIndex = index;
-                document.title = `${song.title} - ${song.channel}`;
-
-                fetch('/update-play-count', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ index: song.index })
-                })
-                .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
-                .then(data => {
-                    const badge = document.querySelector(`#song-${index} .badge`);
-                    if (badge) {
-                        const currentCount = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
-                        badge.innerText = `${currentCount + 1}회`;
-                    }
-                })
-                .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
-            };
-
-            window.playNext = function () {
-                currentSongIndex++;
-                if (searchResults && currentSongIndex < playlist.length) {
-                    window.playSong(currentSongIndex);
+        if (searchInput) {
+            searchInput.addEventListener('input', function (e) {
+                const searchQuery = e.target.value.trim();
+                if (searchQuery.length === 0) {
+                    searchResults = null;
+                    playlist = [...fullPlaylist];
+                    renderSongs(playlist);
                     return;
                 }
 
-                const lastPlayedSong = playlist[currentSongIndex - 1];
-                document.getElementById("searchInput").value = "";
-                searchResults = null;
-                playlist = [...fullPlaylist];
-
-                const realIndex = playlist.findIndex(
-                    song => song.title === lastPlayedSong.title && song.channel === lastPlayedSong.channel
-                );
-
-                currentSongIndex = (realIndex + 1) % playlist.length;
-                renderSongs(playlist);
-                window.playSong(currentSongIndex);
-            };
-
-            audioPlayer.addEventListener('ended', window.playNext);
-
-            function renderSongs(filteredPlaylist) {
-                songList.innerHTML = '';
-
-                filteredPlaylist.forEach((song) => {
-                    // console.log("🎯 song.index =", song.index);
-                    // console.log("⭐ favoritedIndexes =", favoritedIndexes);
-                    const originalIndex = playlist.findIndex(s =>
-                        s.title === song.title && s.channel === song.channel
-                    );
-
-                    const songDiv = document.createElement('div');
-                    songDiv.className = `alert alert-light song-item d-flex justify-content-between align-items-center py-2 px-3 my-1`;
-                    songDiv.style.cursor = 'pointer';
-                    songDiv.id = `song-${originalIndex}`;
-                    songDiv.onclick = () => playSong(originalIndex);
-
-                    const leftDiv = document.createElement('div');
-                    leftDiv.classList.add('d-flex', 'align-items-center');
-
-                    const favoriteBtn = document.createElement('button');
-                    favoriteBtn.className = 'favorite-btn';
-                    favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
-                    favoriteBtn.classList.toggle('active', favoritedIndexes.includes(Number(song.index)));
-                    favoriteBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        fetch('/toggle-favorite', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({ index: song.index })
-                        }).then(res => res.json())
-                          .then(data => {
-                              favoriteBtn.classList.toggle('active', data.favorited);
-                          });
-                    });
-
-                    const infoDiv = document.createElement('div');
-                    infoDiv.innerHTML = `<strong>${song.title}</strong><br><small>${song.channel}</small>`;
-
-                    leftDiv.appendChild(favoriteBtn);
-                    leftDiv.appendChild(infoDiv);
-
-                    const badgeSpan = document.createElement('span');
-                    badgeSpan.className = 'badge bg-secondary';
-                    badgeSpan.innerText = `${song.play_count}회`;
-
-                    songDiv.appendChild(leftDiv);
-                    songDiv.appendChild(badgeSpan);
-                    songList.appendChild(songDiv);
-                });
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', function (e) {
-                    const searchQuery = e.target.value.trim();
-
-                    if (searchQuery.length === 0) {
-                        searchResults = null;
-                        playlist = [...fullPlaylist];
+                fetch(`/search?q=${encodeURIComponent(searchQuery)}`)
+                    .then(res => res.json())
+                    .then(results => {
+                        searchResults = results.map(result => {
+                            return fullPlaylist.find(song => song.index == result.index_number);
+                        }).filter(Boolean);
+                        playlist = searchResults;
                         renderSongs(playlist);
-                        return;
-                    }
-
-                    fetch(`/search?q=${encodeURIComponent(searchQuery)}`)
-                        .then(res => res.json())
-                        .then(results => {
-                            searchResults = results.map(result => {
-                                return fullPlaylist.find(song => song.index === result.index_number);
-                            }).filter(Boolean);
-
-                            playlist = searchResults;
-                            renderSongs(playlist);
-                        })
-                        .catch(err => {
-                            console.error("검색 요청 실패:", err);
-                        });
-                });
-            }
-
-            document.getElementById("updateButton").addEventListener("click", function () {
-                fetch("/update-playlist")
-                    .then(res => res.text())
-                    .then(response => {
-                        alert(response);
-                        console.log("🔁 서버 응답:", response);
-                        location.reload();
                     });
             });
+        }
 
-            renderSongs(playlist);
-            window.playSong(0);
-        });
-    </script>
+        renderSongs(playlist);
+        window.playSong(0);
+    });
+
+    document.getElementById('searchToggle').addEventListener('click', function () {
+        const input = document.getElementById('searchInput');
+        input.classList.toggle('active');
+        if (input.classList.contains('active')) {
+            input.focus();
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        const input = document.getElementById('searchInput');
+        const toggle = document.getElementById('searchToggle');
+        if (!input.contains(e.target) && !toggle.contains(e.target)) {
+            input.classList.remove('active');
+        }
+    });
+</script>
 @endpush

@@ -100,6 +100,7 @@ class MusicController extends Controller
                 'play_count' => $song->play_count,
                 'bpm' => $song->BPM,
                 'channel' => $channelNormalized,
+                'videoID' => $song->videoID,
             ];
         }
 
