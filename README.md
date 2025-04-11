@@ -8,6 +8,25 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-04-12</strong></summary>
+  <ul>
+    <li>➕ <strong>ADD</strong>: media Session API 도입</li>
+    <li>➕ <strong>ADD</strong>: 메뉴(햄버거바) 추가 - 찜 목록, 재생목록 업데이트 항목을 메뉴로 이동</li>
+        <li>🛠️ <strong>Fixed</strong>: 음원 썸네일 우측 구성</li>
+         <li>🛠️ <strong>Fixed</strong>: 상단 UI 개선(검색 아이콘 관련 | 클릭시 애니메이션 효과 추가)</li>
+  </ul>
+</details>
+
+<details>
+  <summary><strong>2025-04-10</strong></summary>
+  <ul>
+    <li>🛠️ <strong>Fixed</strong>: `UI'개선</li>
+        <li>➕ <strong>ADD</strong>:기기 별로(찜) 기능 필터링</li>
+            <li>➕ <strong>ADD</strong>: 재생중인 곡의 Youtube videoid를 활용한 Storage Cover(썸네일)  추가</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-09</strong></summary>
   <ul>
     <li>➕ <strong>ADD</strong>: 기기별로 특정 노래 찜(좋아요)기능</li>
@@ -64,6 +83,7 @@
     - <code>2025-04-07</code>일 개선 완료 
   <li><s>특정 노래 <code>찜, 좋아요</code> 기능</s></li>
     - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
+        - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
   <li>매핑 기능 고도화<br>
     - 기존: <code>.txt</code> 기반<br>
     - 개선: <strong>DB 테이블 기반</strong> 관리
@@ -71,12 +91,3 @@
 </ol>
 
 <hr>
-
-<p>
-  <img 
-    src="https://media.discordapp.net/attachments/895639765402132490/1358328768153784372/A8BBB9F9-B703-4445-BA09-807CEDD224B8.jpg?ex=67f371be&is=67f2203e&hm=ece68c11863bb3a64483b65861b1d6701fbb890ffa96df3655730aa1ca4e77b9&" 
-    alt="좌측 Laravel | 우측 구형"
-    style="max-width: 100%; border-radius: 10px;"
-  >
-</p>
-<p><em>좌측: Laravel 기반 리뉴얼 버전 | 우측: 기존 프로젝트</em></p>
