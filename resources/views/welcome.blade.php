@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     { src: thumbnailUrl, sizes: '512x512', type: 'image/jpeg' }
                 ]
             });
+        }
 
             navigator.mediaSession.setActionHandler('previoustrack', () => {
                 if (currentSongIndex > 0) playSong(currentSongIndex - 1);
