@@ -49,16 +49,15 @@
 </div>
 
 <div id="audioPlayerContainer">
-    <div id="audioInfo" class="d-flex align-items-center">
-        <img id="coverImage" src="" alt="커버 이미지"
-             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
-        <div>
-            <p id="songTitle" class="mb-0">재생 중인 곡 없음</p>
-        </div>
+  <div id="audioInfo" class="d-flex align-items-center">
+    <img id="coverImage" src="" alt="커버 이미지">
+    <div id="songDetails">
+      <p id="songTitle" class="mb-0">재생 중인 곡 없음</p>
     </div>
-    <audio id="audioPlayer" controls preload="metadata">
-        Your browser does not support the audio element.
-    </audio>
+  </div>
+  <audio id="audioPlayer" controls preload="metadata">
+    Your browser does not support the audio element.
+  </audio>
 </div>
 @endsection
 
@@ -207,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     { src: thumbnailUrl, sizes: '512x512', type: 'image/jpeg' }
                 ]
             });
-        }
 
             navigator.mediaSession.setActionHandler('previoustrack', () => {
                 if (currentSongIndex > 0) playSong(currentSongIndex - 1);

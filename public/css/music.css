@@ -65,6 +65,15 @@ body {
     margin: 0;
   }
 
+#audioPlayerContainer #coverImage {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 15px;
+    position: static;  /* 절대 위치 제거 */
+}
+
   .thumbnail-wrapper {
     position: relative;
     margin-right: 10px;
@@ -204,8 +213,11 @@ li span {
 
 #audioInfo {
     display: flex;
-    text-align: center;
-}
+    flex-direction: row; 
+    align-items: center;
+    gap: 10px;  /* 이미지와 텍스트 사이에 10px 간격 추가 */
+    text-align: left; /* 제목이 좌측 정렬되도록 */
+  }
 
 #songTitle {
     font-weight: bold;

@@ -6,6 +6,15 @@
 <hr>
 
 <h2>📌 수정 내역</h2>
+
+<details>
+  <summary><strong>2025-04-14</strong></summary>
+  <ul>
+        <li>🛠️ <strong>Fixed</strong>: audioPlayerContainer의 coverImage 위치 이동</li>
+         <li>🛠️ <strong>Fixed</strong>: yt-dlp 관련 재생목록 업데이트 미작동 코드 수정</li>
+  </ul>
+</details>
+
 <details>
   <summary><strong>2025-04-12</strong></summary>
   <ul>
@@ -19,16 +28,11 @@
 <details>
   <summary><strong>2025-04-10</strong></summary>
   <ul>
-    <li>➕ <strong>ADD</strong>: 햄버거 태그 별 기능 추가가</li>
-    <li>➕ <strong>ADD</strong>: 기기별로 찜(좋아요) 노래 조회</li>
-    <li>➕ <strong>ADD</strong>: UI 변경</li>
-    <li>➕ <strong>ADD</strong>: 우측에 Youtube의 썸네일 사용</li>
     <li>🛠️ <strong>Fixed</strong>: `UI'개선</li>
         <li>➕ <strong>ADD</strong>:기기 별로(찜) 기능 필터링</li>
             <li>➕ <strong>ADD</strong>: 재생중인 곡의 Youtube videoid를 활용한 Storage Cover(썸네일)  추가</li>
   </ul>
 </details>
-
 
 <details>
   <summary><strong>2025-04-09</strong></summary>
