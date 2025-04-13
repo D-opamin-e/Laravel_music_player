@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 @endpush
 
 @section('content')
@@ -48,7 +49,9 @@
     </div>
 </div>
 
-<div id="audioPlayerContainer">
+<!-- 기존 오디오플레이어어 -->
+<!-- <div id="audioPlayerContainer" onclick="openFullscreenPlayer()" style="position:relative;"> -->
+<div id="audioPlayerContainer" onclick="openFullscreenPlayer()">
   <div id="audioInfo" class="d-flex align-items-center">
     <img id="coverImage" src="" alt="커버 이미지">
     <div id="songDetails">
@@ -59,6 +62,38 @@
     Your browser does not support the audio element.
   </audio>
 </div>
+
+<!-- 풀스크린플레이어 -->
+<div id="fullscreenPlayer" style="display: none;">
+  <div class="fullscreen-wrapper">
+    <img id="fullscreenCover" src="" alt="Cover" />
+    <div class="song-details">
+      <h2 id="fullscreenTitle">제목</h2>
+      <p id="fullscreenArtist">아티스트</p>
+    </div>
+    
+    <div class="time-bar">
+      <span id="currentTime"></span>
+      <input type="range" id="seekBar" min="0" max="100" value="0" />
+      <span id="duration"></span>
+    </div>
+    
+    <div class="controls new-style">
+  <button class="control-btn fullscreen-prev"><i class="fas fa-step-backward"></i></button>
+  <button class="control-btn main-btn fullscreen-playpause"><i class="fas fa-play"></i></button>
+  <button class="control-btn fullscreen-next"><i class="fas fa-step-forward"></i></button>
+  <button class="close-fullscreen-btn" id="closeFullscreenBtn">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
+
+
+    <p class="next-track-label">다음 트랙</p>
+  </div>
+</div>
+
+
+
 @endsection
 
 @push('scripts')
@@ -67,6 +102,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     let playlist = @json(collect($playlist ?? [])->map(fn($s) => (array) $s)->toArray());
+    window.playlist = playlist;
     const fullPlaylist = [...playlist];
     const mappedChannels = @json($mappedChannels);
     const favoritedIndexes = @json($favorites ?? []).map(i => Number(i));
@@ -172,67 +208,78 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 
-    window.playSong = function (index) {
-        if (!playlist[index]) return;
-        const song = playlist[index];
-        currentSongIndex = index;
+window.playSong = function (index) {
+    if (!playlist[index]) {
+        console.error('⛔ 잘못된 인덱스:', index);
+        return;
+    }
 
-        const thumbnailUrl = `https://img.youtube.com/vi/${song.videoID}/hqdefault.jpg`;
-        coverImage.src = thumbnailUrl;
+    const song = playlist[index];
+    currentSongIndex = index;
 
-        const audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
-        if (audioPlayer.src !== location.origin + audioSrc) {
-            audioPlayer.src = audioSrc;
-        }
-        audioPlayer.play().then(() => console.log("🎵 재생:", song.title));
-        songTitle.innerText = song.title;
-        document.title = `${song.title} - ${song.channel}`;
+    const thumbnailUrl = `https://img.youtube.com/vi/${song.videoID}/hqdefault.jpg`;
+    coverImage.src = thumbnailUrl;
 
-        document.querySelectorAll('.song-item').forEach(item => {
-            item.classList.remove('current-song');
+    const audioSrc = '/music/' + encodeURIComponent(song.title) + '.mp3';
+    const fullSrc = location.origin + audioSrc;
+
+    if (audioPlayer.src !== fullSrc) {
+        audioPlayer.src = fullSrc;
+    }
+
+    audioPlayer.play()
+        .then(() => console.log("🎵 재생됨:", song.title))
+        .catch(err => {
+            console.error("❌ 재생 실패:", err);
         });
-        const currentDiv = document.getElementById(`song-${index}`);
-        if (currentDiv) {
-            currentDiv.classList.add('current-song');
+
+    songTitle.innerText = song.title;
+    document.title = `${song.title} - ${song.channel}`;
+
+    document.querySelectorAll('.song-item').forEach(item => {
+        item.classList.remove('current-song');
+    });
+    const currentDiv = document.getElementById(`song-${index}`);
+    if (currentDiv) {
+        currentDiv.classList.add('current-song');
+    }
+
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.title,
+            artist: song.channel,
+            album: '상재의 노래주머니',
+            artwork: [
+                { src: thumbnailUrl, sizes: '512x512', type: 'image/jpeg' }
+            ]
+        });
+
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            if (currentSongIndex > 0) playSong(currentSongIndex - 1);
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', playNext);
+    }
+
+    fetch('/update-play-count', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ index: song.index })
+    })
+    .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
+    .then(data => {
+        const badge = document.querySelector(`#song-${index} .badge`);
+        if (badge) {
+            const count = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
+            badge.innerText = `${count + 1}회`;
         }
+    })
+    .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
+};
 
-        // ✅ Media Session API 설정
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: song.title,
-                artist: song.channel,
-                album: '상재의 노래주머니',
-                artwork: [
-                    { src: thumbnailUrl, sizes: '512x512', type: 'image/jpeg' }
-                ]
-            });
 
-            navigator.mediaSession.setActionHandler('previoustrack', () => {
-                if (currentSongIndex > 0) playSong(currentSongIndex - 1);
-            });
-            navigator.mediaSession.setActionHandler('nexttrack', () => {
-                playNext();
-            });
-        }
-
-        fetch('/update-play-count', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ index: song.index })
-        })
-        .then(res => res.ok ? res.json() : Promise.reject("서버 응답 오류"))
-        .then(data => {
-            const badge = document.querySelector(`#song-${index} .badge`);
-            if (badge) {
-                const currentCount = parseInt(badge.innerText.replace(/\D/g, '')) || 0;
-                badge.innerText = `${currentCount + 1}회`;
-            }
-        })
-        .catch(err => console.error('❌ 재생 수 업데이트 실패:', err));
-    };
 
     window.playNext = function () {
         currentSongIndex++;
@@ -321,4 +368,5 @@ document.addEventListener('click', function (e) {
     }
 });
 </script>
+<script src="{{ asset('js/player-ui.js') }}"></script>
 @endpush
