@@ -1,22 +1,18 @@
-
-body {
+/* General Body */
+body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden;
     background: linear-gradient(to right, #f9f9f9, #e3eafc);
     color: #333;
-}
-.favorite-btn {
-    color: rgba(211, 211, 211);
-    background: none !important;
-    border: none;
-    outline: none;
-    margin-right: 8px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.favorite-btn.active i {
-    color: gold;
-}
+/* Header */
 .header {
     position: fixed;
     top: 0;
@@ -29,14 +25,14 @@ body {
 }
 
 .content {
-    margin-top: 10px; /* 헤더 높이에 맞춰 여백 추가 */
+    margin-top: 10px; /* Space for header */
     overflow-y: auto;
-    height: calc(100vh - 70px); /* 헤더를 제외한 높이 */
-    padding-top: 80px; /* header 가림 방지 80픽셀 적당? */
-    margin-bottom: 100px; /* 헤더 높이에 맞춰 여백 추가 */
+    height: calc(100vh - 70px); /* Full height minus header */
+    padding-top: 80px; /* Avoids header overlap */
+    margin-bottom: 100px; /* Space for footer */
 }
 
-
+/* Playlist */
 .playlist {
     padding: 20px;
 }
@@ -44,56 +40,21 @@ body {
 .playlist-item {
     margin-bottom: 10px;
 }
-.search {
-    position: relative;
-    width: 300px;
-  }
-  
-  input {
-    width: 50%;
-    border: 1px solid #bbb;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-  
-  img {
-    position: absolute;
-    width: 17px;
-    top: 10px;
-    right: 12px;
-    margin: 0;
-  }
 
-#audioPlayerContainer #coverImage {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-left: 15px;
-    position: static;  /* 절대 위치 제거 */
+/* Favorite Button */
+.favorite-btn {
+    color: rgba(211, 211, 211);
+    background: none !important;
+    border: none;
+    outline: none;
+    margin-right: 8px;
 }
 
-  .thumbnail-wrapper {
-    position: relative;
-    margin-right: 10px;
+.favorite-btn.active i {
+    color: gold;
 }
 
-
-.play-icon::before {
-    content: '\25B6';  /* Unicode for the triangle symbol */
-    font-family: 'Font Awesome Free 5';
-    font-weight: 900;
-    margin-right: 5px;
-}
-
-/* .song-thumbnail {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
-} */
-
+/* Song Item */
 .song-item {
     display: flex;
     justify-content: space-between;
@@ -108,41 +69,31 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 .song-item.current-song {
-    background-color: #f3e8ff;  /* 포근한 연보라색 */
-    color: #3d1a83;             /* 어두운 보라 텍스트 */
+    background-color: #f3e8ff; /* Soft lavender */
+    color: #3d1a83; /* Dark purple text */
 }
+
+/* Buttons */
 .do_btn {
     display: inline-block;
     font-weight: 400;
     color: #000000;
     text-align: center;
     vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     background-color: transparent;
     width: 32%;
     border: 1px solid #bbb;
     border-radius: 8px;
     font-size: 14px;
-    padding: 10px 12px; /* 테두리 두께를 위아래 10px, 좌우 12px로 설정 */
-    padding: 0; /* 테두리 공간과 충돌을 방지하기 위해 패딩 제거 */
-    font-size: 1rem;
-    line-height: 2;
-    outline: none;
-}
-
-@media (max-width: 400px) {
-    .do_btn {
-        border: solid 5px 6px; /* 작은 화면에서는 테두리 두께를 줄일 수 있음 */
-    }
+    padding: 10px 12px; 
 }
 
 .do_btn:focus {
     outline: none;
-}        
+}
 
 h1 {
     font-size: 1.5em;
@@ -192,12 +143,52 @@ li span {
     text-overflow: ellipsis;
 }
 
+@media (max-width: 400px) {
+    .do_btn {
+        border: solid 5px 6px;
+    }
+}
+
+/* Search Input */
+.search {
+    position: relative;
+    width: 300px;
+}
+
+input {
+    width: 50%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+img {
+    position: absolute;
+    width: 17px;
+    top: 10px;
+    right: 12px;
+    margin: 0;
+}
+
+/* Audio Player */
+#audioPlayerContainer #coverImage {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 15px;
+    position: static;
+}
+
 #audioPlayerContainer {
-    color : black;
+    color: black;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+    height: 80px; /* 예시: 고정 높이 */
+    overflow: hidden;
     background-color: white;
     box-shadow: 0 -2px 5px rgb(255, 255, 255);
     z-index: 1000;
@@ -207,33 +198,34 @@ li span {
     padding: 10px 12px;
 }
 
-#audioPlayer {
-    width: 100%;
-}
-
 #audioInfo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: row; 
     align-items: center;
-    gap: 10px;  /* 이미지와 텍스트 사이에 10px 간격 추가 */
-    text-align: left; /* 제목이 좌측 정렬되도록 */
-  }
+    gap: 10px;
+    text-align: left;
+}
 
 #songTitle {
     font-weight: bold;
-    width: 150px;
-    /* max-width: 100%; */
+    min-width: 0;
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: max-width 0.3s;
+    flex-shrink: 1; /* 필요 시 줄어들게 */
 }
+
 
 #audioControls {
     display: flex;
     align-items: center;
 }
 
+/* Shuffle & Sequential Buttons */
 #shuffleButton,
 #sequentialButton {
     font-size: 20px;
@@ -250,6 +242,7 @@ li span {
     color: #cc0000;
 }
 
+/* Full-Screen Overlay */
 #fullScreenOverlay {
     display: none;
     position: fixed;
@@ -262,6 +255,7 @@ li span {
     align-items: center;
     justify-content: center;
 }
+
 
 body.menu-open #playlistContainer {
     margin-left: 250px;
@@ -336,3 +330,347 @@ body.menu-open #playlistContainer {
     align-items: center;
 }
 
+#fullscreenPlayer {
+    display: none; /* 기본은 숨김 */
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to top, #000000, #2D2A29);
+    z-index: 2000;
+    padding: 0px;
+    overflow: auto;
+    pointer-events: none;
+    /* 시각적으로 눈에 띄게 */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    pointer-events: auto; /* 꼭 있어야 함 */
+}
+.fullscreen-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  
+.fullscreen-content {
+    pointer-events: auto; /* 내부 콘텐츠는 클릭 가능하게 */
+  }
+#fullscreenPlayer.active {
+    display: block;
+    opacity: 1;
+  }
+
+#fullscreenPlayer img {
+    max-width: 80%;
+    max-height: 300px;
+    margin: 20px auto;
+    display: block;
+    border-radius: 20px;
+}
+
+
+#fullscreenTitle {
+    font-size: 1.1rem;  
+    font-weight: 600;   
+    margin: 0.5rem 0 0.25rem 0;
+    text-align: left;
+  }
+
+#fullscreenArtist {
+    font-size: 0.9rem;  
+    font-weight: 600;  
+    margin: 0.5rem 0 0.25rem 0;
+    text-align: left;
+    margin-bottom: 1.2rem; /* 싱크바와의 간격 */
+}
+
+
+#backButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+#fullscreenCover {
+    position: static !important;
+    display: block;
+    margin: 20px auto;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .fullscreen-wrapper {
+    max-height: 90vh;
+    display: flex;
+    margin-top: 3rem;
+    flex-direction: column;
+    justify-content: center;  /* 수직 정렬 */
+    align-items: center;      /* 수평 정렬 */
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .song-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ← 텍스트를 왼쪽으로 붙임 */
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+.song-details h2 {
+    font-size: 26px;
+    margin: 10px 0 5px;
+    color: white;
+}
+
+.song-details p {
+    font-size: 18px;
+    margin: 0;
+    color: #ddd;
+}
+
+.time-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 시간과 seekbar 사이 간격 */
+    width: 100%;
+    padding: 0 16px;
+  }
+
+.time-bar input[type="range"] {
+    flex-grow: 1;
+    appearance: none;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+}
+
+.time-bar span {
+    font-size: 14px;
+    color: #ccc;
+    white-space: nowrap;
+  }
+
+.controls.new-style {
+    margin-top: 80px; /* 버튼만 아래로 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+.controls.new-style button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.controls.new-style button:hover {
+    transform: scale(1.2);
+}
+
+.next-track-label {
+    font-size: 14px;
+    color: #888;
+    margin-top: 190px;
+}
+.control-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 0 50px; /* 좌우 간격 */
+  }
+  .control-btn:hover {
+    transform: scale(1.1);
+  }
+  .control-btn.main-btn {
+    background-color: white;          /* 항상 흰색 배경 */
+    color: black;                     /* 아이콘은 검정 */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: none;
+    transition: transform 0.2s ease;
+  }
+
+.control-btn.main-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.time-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #ccc; /* 유튜브 뮤직 스타일 회색 */
+    margin-top: -10px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+    flex: 1;
+    height: 4px;
+    background: transparent;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+  
+    /* 없애기: 브라우저 기본 테두리 */
+    box-shadow: none;
+  }
+  
+  /* Webkit - 트랙 (전체 바) */
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    background: linear-gradient(to right, white var(--progress, 0%), #444 var(--progress, 0%));
+  }
+  
+  /* Webkit - 슬라이더 핸들 (동그라미) */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    margin-top: -4px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  
+  /* Firefox - 트랙 */
+  input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+  }
+  input[type="range"]::-moz-range-progress {
+    height: 4px;
+    background: white;
+    border-radius: 2px;
+  }
+  
+  /* Firefox - 핸들 */
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  
+  .close-fullscreen-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    color: white;
+    font-size: 24px;
+    border-radius: 50%;
+    padding: 8px 10px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s ease;
+  }
+  
+  .close-fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .fullscreen-player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 */
+    align-items: center;      /* 수평 중앙 */
+    height: 100vh;            /* 전체 높이 */
+    width: 100vw;             /* 전체 너비 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000;   /* 배경색은 상황에 맞게 */
+    z-index: 9999;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .fullscreen-player img {
+    max-width: 80vw;
+    max-height: 40vh;
+    object-fit: contain;
+    margin-bottom: 2rem;
+  }
+  
+  .fullscreen-player .controls {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .cover-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+  
+  .track-title {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .artist-name {
+    font-size: 1rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .audio-controls {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }

@@ -10,10 +10,11 @@
 <details>
   <summary><strong>2025-04-14</strong></summary>
   <ul>
-      <li>➕ <strong>ADD</strong>: 심플UI(풀스크린) 추가</li>
+      <li>➕ <strong>ADD</strong>: 심플UI(fullscreenPlayer) 추가</li>
       <img src="http://kkk234454.duckdns.org/simple.png">
         <li>🛠️ <strong>Fixed</strong>: audioPlayerContainer의 coverImage 위치 이동</li>
          <li>🛠️ <strong>Fixed</strong>: yt-dlp 관련 재생목록 업데이트 미작동 코드 수정</li>
+         <li>🛠️ <strong>Fixed</strong>: fullscreenPlayer 및 html, body 의 주요 CSS 수정</li>
   </ul>
 </details>
 
