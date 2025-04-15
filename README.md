@@ -8,6 +8,15 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-04-15</strong></summary>
+  <ul>
+      <img src="http://kkk234454.duckdns.org/simple.png">
+        <li>🛠️ <strong>Fixed</strong>: 곡 검색 후, fullscreenplayer로 재생시, 커버이미지, 타이틀, 가수 미일치 버그 수정</li>
+         <li>🛠️ <strong>Fixed</strong>: 전역변수 관련 수정</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-14</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: 심플UI(fullscreenPlayer) 추가</li>
