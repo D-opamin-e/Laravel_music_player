@@ -20,7 +20,7 @@
   <summary><strong>2025-04-14</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: 심플UI(fullscreenPlayer) 추가</li>
-      <img src="http://kkk234454.duckdns.org/simple.png">
+      <img src="http://kkk234454.duckdns.org/full_simple.png" width="430px" heigh="932px">
         <li>🛠️ <strong>Fixed</strong>: audioPlayerContainer의 coverImage 위치 이동</li>
          <li>🛠️ <strong>Fixed</strong>: yt-dlp 관련 재생목록 업데이트 미작동 코드 수정</li>
          <li>🛠️ <strong>Fixed</strong>: fullscreenPlayer 및 html, body 의 주요 CSS 수정</li>
@@ -102,12 +102,12 @@
 <li><s>검색된 노래 재생 후 후처리 기능</s></li>
     - <code>2025-04-07</code>일 개선 완료 
   <li><s>특정 노래 <code>찜, 좋아요</code> 기능</s></li>
-    - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
-        - <code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 
+        - <s><code>2025-04-09</code>일 추가 완료 | <code>찜 노래 필터링 기능 추가</code> 목표 </s>
   <li>매핑 기능 고도화<br>
     - 기존: <code>.txt</code> 기반<br>
     - 개선: <strong>DB 테이블 기반</strong> 관리
   </li>
+    <li>곡 드래그시 곡 순서 이동 기능</li>
 </ol>
 
 <hr>
