@@ -12,6 +12,7 @@
   <ul>
         <li>🛠️ <strong>Fixed</strong>: 곡 검색 후, fullscreenplayer로 재생시, 커버이미지, 타이틀, 가수 미일치 버그 수정</li>
          <li>🛠️ <strong>Fixed</strong>: 전역변수 관련 수정</li>
+                  <li>🛠️ <strong>Fixed</strong>: updatePlaylist시, BPM.py 미작동 버그 수정</li>
   </ul>
 </details>
 
@@ -108,5 +109,4 @@
   </li>
     <li>곡 드래그시 곡 순서 이동 기능</li>
 </ol>
-
 <hr>

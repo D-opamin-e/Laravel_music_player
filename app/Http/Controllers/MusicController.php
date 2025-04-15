@@ -180,12 +180,16 @@ class MusicController extends Controller
         $userIP = $request->ip();
         $filename = storage_path("app/playlist/{$userIP}.json");
 
-        $scriptPath = base_path('now_playlist_update.js');
+        $scriptPath = storage_path('../nodejs/now_playlist_update.js');
         $command = "node {$scriptPath} {$userIP}";
         $output = shell_exec($command);
 
-        file_put_contents(storage_path('logs/shell_exec_log.txt'), "Command: $command\nOutput: $output\n", FILE_APPEND);
-
+        file_put_contents(
+            storage_path('logs/shell_exec_log.txt'),
+            "Command: $command\nOutput:\n$output\n---------------------\n",
+            FILE_APPEND
+        );
+        
         $jsonStart = strpos($output, '{"');
         $jsonEnd = strrpos($output, '}');
         $jsonString = $jsonStart !== false && $jsonEnd !== false
@@ -210,8 +214,18 @@ class MusicController extends Controller
                 return response($outputString)->header('Content-Type', 'text/plain; charset=utf-8');
             }
         }
+        $pythonPath = 'E:\\Laravel\\music\\nodejs\\python.exe';
+        $pythonScriptPath = storage_path('../nodejs/bpm.py');
+        $bpmOutputRaw = shell_exec("\"{$pythonPath}\" \"{$pythonScriptPath}\" 2>&1");
+        $bpmOutput = iconv("EUC-KR", "UTF-8//IGNORE", $bpmOutputRaw);
+        file_put_contents(
+            storage_path('logs/bpm_exec_log.txt'),
+            "Executed BPM.py\nOutput:\n{$bpmOutput}\n---------------------\n",
+            FILE_APPEND
+        );
+        
 
-        return response("$time / $firstLine")->header('Content-Type', 'text/plain; charset=utf-8');
+        return response("$firstLine")->header('Content-Type', 'text/plain; charset=utf-8');
     }
 
     public function updatePlayCount(Request $request)
