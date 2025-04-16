@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
     function updateFullscreenUI(song) {
         if (song) {
-            const thumbnailUrl = `https://i.ytimg.com/vi/${song.videoID}/hqdefault.jpg`;
+            const thumbnailUrl = `https://i.ytimg.com/vi/${song.videoID}/maxresdefault.jpg`;
             if (fullscreenCover) {
                 fullscreenCover.src = thumbnailUrl;
                 fullscreenCover.onerror = function() { this.src = '/images/default_thumbnail.png'; }; // 기본 이미지 경로

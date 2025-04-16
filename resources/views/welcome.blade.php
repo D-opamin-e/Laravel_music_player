@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
             rightDiv.style.flexShrink = '0';
 
             const thumbnail = document.createElement('img');
-            thumbnail.src = `https://i.ytimg.com/vi/${song.videoID}/hqdefault.jpg`;
+            thumbnail.src = `https://i.ytimg.com/vi/${song.videoID}/maxresdefault.jpg`;
             thumbnail.alt = `${song.title} 썸네일`;
             thumbnail.style.width = '50px';
             thumbnail.style.height = '50px';
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentSongOriginalIndex = index;
         window.currentPlayingSong = song;
 
-        const thumbnailUrl = `https://i.ytimg.com/vi/${song.videoID}/hqdefault.jpg`;
+        const thumbnailUrl = `https://i.ytimg.com/vi/${song.videoID}/maxresdefault.jpg`;
         coverImage.src = thumbnailUrl;
         coverImage.onerror = function() { this.src = '/images/default_thumbnail.png'; }; // 실제 기본 이미지 경로
         songTitle.innerText = song.title;
