@@ -11,6 +11,7 @@
   <summary><strong>2025-04-21</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: 로그인/회원가입 기능 추가(추후 유저별 곡 찜 기능 구현 예정)</li>
+       <li>🛠️ <strong>Fixed</strong>: 유저별 곡 찜 기능 구현</li>
   </ul>
 </details>
 

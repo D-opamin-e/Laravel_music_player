@@ -13,18 +13,39 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <script src="{{ asset('JS/jquery-3.6.4.js') }}"></script>
-    @stack('styles')  <!-- @yield('styles') 대신 @stack('styles') 사용 -->
+    <script src="{{ asset('CSS/JS/jquery-3.6.4.js') }}"></script>
+    @stack('styles')
 </head>
 <body>
+    {{-- 세션 디버깅을 위한 HTML 출력 코드 (임시 추가) --}}
+    @if(Session::has('registered'))
+        <p style="color: green;">세션에 'registered' 메시지가 있습니다: {{ Session::get('registered') }}</p>
+    @endif
+
+    @if(Session::has('loggedIn'))
+        <p style="color: green;">세션에 'loggedIn' 메시지가 있습니다: {{ Session::get('loggedIn') }}</p>
+    @endif
+    {{-- 세션 디버깅 HTML 코드 끝 --}}
+
+
     <div class="container">
         @yield('content')
     </div>
 
-    <!-- jQuery와 Bootstrap JS -->
+    <script>
+        // 세션에 저장된 'registered' (회원가입) 또는 'loggedIn' (로그인) 메시지를 확인하고 alert 창 띄우기
+        // 이 스크립트 블록 안에는 JavaScript 코드만 있어야 합니다.
+        @if(Session::has('registered'))
+            alert("{{ Session::get('registered') }}");
+        @elseif(Session::has('loggedIn'))
+            alert("{{ Session::get('loggedIn') }}");
+        @endif
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
-    @stack('scripts')  <!-- ✅ @stack('scripts')를 <body> 내부에 위치시킴 -->
+
+    @stack('scripts')
 </body>
 </html>

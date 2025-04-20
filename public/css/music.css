@@ -303,6 +303,7 @@ body.menu-open #playlistContainer {
     cursor: pointer;
 }
 
+
 #sideMenu {
     position: fixed;
     top: 0;
@@ -311,10 +312,15 @@ body.menu-open #playlistContainer {
     height: 100%;
     background-color: #fff;
     border-right: 1px solid #ddd;
-    padding: 85px 20px 20px 20px;
+    /* padding: 85px 20px 20px 20px; */
+    padding-top: 80px; 
+    padding-bottom: 65px;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: left 0.3s ease;
-    z-index: 999;
+    z-index: 1000;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
 }
 
 #sideMenu.active {
@@ -324,12 +330,17 @@ body.menu-open #playlistContainer {
 #sideMenu ul {
     list-style: none;
     padding: 0;
+    margin: 0; 
+    flex-grow: 1; 
 }
 
 #sideMenu ul li {
-    margin: 15px 0;
-    font-size: 18px;
+    padding: 15px 20px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#sideMenu ul li:hover {
+    background-color: #e9ecef; 
 }
 
 .search-container {
@@ -340,7 +351,7 @@ body.menu-open #playlistContainer {
 }
 
 #fullscreenPlayer {
-    display: none; /* 기본은 숨김 */
+    display: none; 
     opacity: 0;
     transition: opacity 0.4s ease;
     position: fixed;
@@ -683,3 +694,41 @@ body.menu-open #playlistContainer {
     justify-content: center;
     gap: 2rem;
   }
+  .account-links {
+    padding: 20px; /* 상하좌우 패딩 */
+    background-color: #e9ecef; /* 약간 더 어두운 배경색으로 구분 */
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    gap: 10px; /* 버튼들 사이 간격 */
+    flex-shrink: 0; /* .account-links 섹션이 줄어들지 않도록 설정 */
+}
+
+.sidebar-account-btn {
+    display: block;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    font-size: 0.9em;
+}
+
+.sidebar-account-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.sidebar-account-btn i {
+    margin-right: 8px;
+}
+
+.logged-in-user {
+    display: block;
+    padding: 10px 15px;
+    text-align: center;
+    color: #495057;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
