@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header">{{ __('로그인') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
@@ -56,12 +56,6 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('로그인') }}
                                 </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('비밀번호 찾기') }}
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     </form>

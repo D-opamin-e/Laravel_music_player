@@ -36,6 +36,7 @@ body, html {
     overflow-y: auto;
     height: calc(100vh - 70px); /* Full height minus header */
     padding-top: 80px; /* Avoids header overlap */
+    padding-bottom: 80px; /* Avoids header overlap */
     margin-bottom: 100px; /* Space for footer */
 }
 
