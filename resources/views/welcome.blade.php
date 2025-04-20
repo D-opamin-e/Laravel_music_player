@@ -17,6 +17,8 @@
         <li onclick="window.showMain()">메인</li>
         <li onclick="window.showFavorites()">찜 곡</li>
         <li onclick="window.updatePlaylist()">재생목록 업데이트</li>
+        <li onclick="window.login()">로그인</li>
+        <li onclick="window.sinup()">회원가입</li>
     </ul>
 </div>
 
