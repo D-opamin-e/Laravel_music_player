@@ -8,6 +8,13 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-04-21</strong></summary>
+  <ul>
+      <li>➕ <strong>ADD</strong>: 로그인/회원가입 기능 추가(추후 유저별 곡 찜 기능 구현 예정)</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-15</strong></summary>
   <ul>
         <li>🛠️ <strong>Fixed</strong>: 곡 검색 후, fullscreenplayer로 재생시, 커버이미지, 타이틀, 가수 미일치 버그 수정</li>
