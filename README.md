@@ -10,7 +10,8 @@
 <details>
   <summary><strong>2025-04-21</strong></summary>
   <ul>
-      <li>➕ <strong>ADD</strong>: 로그인/회원가입 기능 추가(추후 유저별 곡 찜 기능 구현 예정)</li>
+      <li>➕ <strong>ADD</strong>: 로그인/회원가입 기능 추가</li>
+          <li>➕ <strong>ADD</strong>: 현재 재생 중인 곡 항목으로 자동 스크롤</li>
        <li>🛠️ <strong>Fixed</strong>: 유저별 곡 찜 기능 구현</li>
        <li>🛠️ <strong>Fixed</strong>: Media Session API 썸네일 비율 수정 16:9 ➡️ 1:1</li>
   </ul>
