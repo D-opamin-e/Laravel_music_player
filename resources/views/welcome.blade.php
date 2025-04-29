@@ -4,8 +4,9 @@
 @section('title', '상재의 노래주머니')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('CSS/music.css?r=4') }}">
+<link rel="stylesheet" href="{{ asset('CSS/music.css?r=7') }}">
 <link rel="stylesheet" href="{{ asset('CSS/bootstrap.css?r=2') }}">
+<!-- <link rel="stylesheet" href="{{ asset('CSS/style.css?r=1') }}"> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -92,6 +93,13 @@
       <button class="control-btn fullscreen-next"><i class="fas fa-step-forward"></i></button>
       <button class="close-fullscreen-btn" id="closeFullscreenBtn"><i class="fas fa-times"></i></button>
     </div>
+    <div class="fullscreen-tabs">
+    <button class="btn" style="height: 40px; background-color: transparent; border: none; position: relative; top: 100px; color: white;">
+        <span style="display: inline-block;">가사</span>
+    </button>
+</div>
+
+
   </div>
 </div>
 @endsection
