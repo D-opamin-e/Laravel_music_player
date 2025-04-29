@@ -34,21 +34,21 @@ class MappingService
         $query = trim($query);
         $normalized = $this->normalizeQuery($query);
     
-        \Log::info("Raw: [$query], Normalized: [$normalized]");
+        // \Log::info("Raw: [$query], Normalized: [$normalized]");
     
         if (isset($this->mappings[$normalized])) {
-            \Log::info("Mapped (exact): " . $this->mappings[$normalized]);
+            // \Log::info("Mapped (exact): " . $this->mappings[$normalized]);
             return $this->mappings[$normalized];
         }
     
         foreach ($this->mappings as $key => $value) {
             if (stripos($normalized, $key) !== false) {
-                \Log::info("Mapped (contains): " . $value);
+                // \Log::info("Mapped (contains): " . $value);
                 return $value;
             }
         }
     
-        \Log::info("No match found for: " . $query);
+        // \Log::info("No match found for: " . $query);
         return null;
     }
     
