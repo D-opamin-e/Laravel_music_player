@@ -8,6 +8,15 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-04-30</strong></summary>
+  <ul>
+      <li>➕ <strong>ADD</strong>: fullscreenplayer에 가사 기능 추가</li>
+       <li>🛠️ <strong>Fixed</strong>: 더 정확한 BPM 측정을 위해 Madmom 모듈 도입</li>
+       <li>🛠️ <strong>Fixed</strong>: BPM 측정 작업을 큐로 처리</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-21</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: 로그인/회원가입 기능 추가</li>
