@@ -94,9 +94,9 @@
       <button class="close-fullscreen-btn" id="closeFullscreenBtn"><i class="fas fa-times"></i></button>
     </div>
     <div class="fullscreen-tabs">
-    <button class="btn" style="height: 40px; background-color: transparent; border: none; position: relative; top: 100px; color: white;">
-        <span style="display: inline-block;">가사</span>
-    </button>
+  <button class="btn" style="height: 40px; background-color: transparent; border: none; position: relative; top: 65px; color: white;">
+    <span style="display: inline-block;">가사</span>
+  </button>
 </div>
 
 

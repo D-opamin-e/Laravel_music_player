@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage; // Storage 파사드 사용 (로그 파�
 use Symfony\Component\Process\Process; // Process 컴포넌트 사용
 use Symfony\Component\Process\Exception\ProcessFailedException; // 예외 처리
 
-class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 구현해야 큐로 실행
+class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 구현해야 큐로 실행됩니다.
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,7 +23,9 @@ class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 
      */
     public function __construct()
     {
-
+        // Job 생성 시 필요한 데이터가 있다면 여기에 인자로 받아 저장합니다.
+        // 현재 BPM 스크립트가 전체를 업데이트하는 것 같으므로 인자는 없을 수 있습니다.
+        // 만약 특정 파일이나 특정 정보가 필요하다면 여기에 추가합니다.
     }
 
     /**
@@ -34,8 +36,11 @@ class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 
     public function handle()
     {
         Log::info("ProcessBpmUpdate Job 시작");
+
+        // 파이썬 실행 경로 및 스크립트 경로 (Job 안에서 정의하거나 생성자 인자로 받기)
+        // 여기서는 MusicController에 있던 경로를 그대로 사용하겠습니다.
         $pythonPath = 'E:\\Laravel\\music\\nodejs\\python.exe';
-        $pythonScriptPath = storage_path('../nodejs/bpm.py'); 
+        $pythonScriptPath = storage_path('../nodejs/bpm.py'); // storage_path는 Job에서도 사용 가능
 
         $bpmCommand = "\"{$pythonPath}\" \"{$pythonScriptPath}\""; // 명령어 변수
 
@@ -46,7 +51,7 @@ class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 
         $process = Process::fromShellCommandline(
             $bpmCommand,
             null, /* cwd - 현재 작업 디렉토리, null이면 PHP의 현재 디렉토리 상속 */
-            ['PYTHONIOENCODING' => 'utf-8'], /* env - 환경 변수 배열 */ 
+            ['PYTHONIOENCODING' => 'utf-8'], /* env - 환경 변수 배열 */ // <--- 이 부분을 이렇게 수정했는지 다시 확인해주세요.
             null, /* input - 표준 입력 */
             3600  /* timeout - 타임아웃 (초) */
         );
@@ -85,9 +90,13 @@ class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 
                 FILE_APPEND
             );
 
+            // TODO: 만약 python 스크립트가 DB 업데이트를 직접 하지 않고 결과를 JSON 등으로 출력한다면,
+            //       여기서 $bpmOutput을 파싱하여 DB 업데이트 로직을 추가해야 합니다.
+            //       현재는 스크립트가 DB를 직접 업데이트한다고 가정합니다.
+
         } catch (ProcessFailedException $exception) {
             Log::error("ProcessBpmUpdate Job 실패: " . $exception->getMessage());
-            // 예외 발생 시 Job은 기본적으로 재시도
+            // 예외 발생 시 Job은 기본적으로 재시도됩니다.
         } catch (\Exception $e) {
              Log::error("ProcessBpmUpdate Job 실행 중 예상치 못한 오류 발생: " . $e->getMessage());
              // 다른 종류의 예외 처리
@@ -104,7 +113,7 @@ class ProcessBpmUpdate implements ShouldQueue // ShouldQueue 인터페이스를 
      */
     public function failed(\Throwable $exception)
     {
-        // 실패 알림 (예: 슬랙, 이메일 등)을 보내거나 로깅
+        // 실패 알림 (예: 슬랙, 이메일 등)을 보내거나 로깅합니다.
         Log::critical("ProcessBpmUpdate Job 최종 실패: " . $exception->getMessage());
     }
 }

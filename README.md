@@ -8,6 +8,24 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-05-06</strong></summary>
+  <ul>
+      <li>➕ <strong>ADD</strong>: python의 whisper와 gemeni를 활용한 가사 싱크 관련 코드</li>
+       <li>🛠️ <strong>Fixed</strong>: player-ui에 동일한 time에 대한 대응 방안 수정</li>
+  </ul>
+</details>
+
+
+<details>
+  <summary><strong>2025-05-03</strong></summary>
+  <ul>
+      <li>➕ <strong>ADD</strong>: 가사 기능에 scroll 기능과 강조 기능 추가</li>
+       <li>➕ <strong>ADD</strong>: Whisper를 활용한 1차적인 가사 및 싱크 추출 및 저장</li>
+       <li>🛠️ <strong>Fixed</strong>: 가사 레이아웃 제작 및 가사 특정 부분 클릭 시, 해당 부분 이동</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-04-30</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: fullscreenplayer에 가사 기능 추가</li>

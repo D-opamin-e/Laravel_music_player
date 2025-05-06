@@ -13,20 +13,23 @@ use App\Services\MappingService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log; // 로그 사용
 use App\Jobs\GenerateSquareThumbnail; // 우리가 만든 썸네일 생성 Job 사용
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Storage; // <-- 이 라인이 누락되었거나 잘못되어 있습니다. 추가해주세요!
 use App\Jobs\ProcessBpmUpdate;
 
 class MusicController extends Controller
 {
     protected $mappingService;
 
+    // MappingService 인스턴스를 주입받아 사용합니다.
     public function __construct(MappingService $mappingService)
     {
         $this->mappingService = $mappingService;
     }
 
+    // 메인 페이지 로드 및 초기 데이터 준비
     public function index(Request $request)
     {
+        // 사용자의 IP 주소 및 플레이리스트 파일 경로를 설정합니다.
         $userIP = $request->header('X-Forwarded-For') ?? $request->ip();
         $userIPSanitized = str_replace(':', '_', $userIP);
         $userPlaylistFile = storage_path('app/playlist/' . $userIPSanitized . '.json');
@@ -149,14 +152,14 @@ class MusicController extends Controller
                  'bpm' => $song->BPM, // BPM
                  'channel' => $channelNormalized, // 채널 (매핑된 이름)
                  'videoID' => $videoID, // YouTube 영상 ID
-                 'thumbnail_url' => $thumbnailUrl, 
+                 'thumbnail_url' => $thumbnailUrl, // <-- 이제 생성된 썸네일 URL 또는 fallback URL이 여기에 담깁니다.
              ];
          }
 
 
         // 생성된 플레이리스트 데이터를 JSON 파일로 저장 (기존 로직)
         try {
-             // 'php artisan storage:link'가 실행되어야 public/storage가 접근 가능
+             // 'php artisan storage:link'가 실행되어야 public/storage가 접근 가능합니다.
              File::put($userPlaylistFile, json_encode($shuffleplaylist, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
              Log::info("MusicController@index: Playlist data saved to {$userPlaylistFile}");
          } catch (\Exception $e) {
@@ -181,7 +184,7 @@ class MusicController extends Controller
             'playlist' => $playlist, // 프론트엔드로 전달되는 플레이리스트 데이터
             'mappedChannels' => $mappedChannels,
             'favorites' => $favorites,
-            'favorited' => $favorites, 
+            'favorited' => $favorites, // 이 변수는 favorites와 동일하게 사용될 수 있습니다.
         ]);
     }
 
@@ -347,12 +350,12 @@ class MusicController extends Controller
 
         // --- BPM 업데이트 Job 디스패치 (새로 추가) ---
         Log::info("BPM 업데이트 Job 디스패치 시도");
-        ProcessBpmUpdate::dispatch(); // BPM 업데이트 Job을 큐에 추가
+        ProcessBpmUpdate::dispatch(); // BPM 업데이트 Job을 큐에 추가합니다.
         Log::info("BPM 업데이트 Job 디스패치 완료");
         // --- BPM 업데이트 Job 디스패치 끝 ---
 
         // --- 응답 메시지 부분 (수정) ---
-        // BPM 계산 결과는 이제 비동기적으로 처리되므로 즉시 응답 메시지를 반환
+        // BPM 계산 결과는 이제 비동기적으로 처리되므로 즉시 응답 메시지를 반환합니다.
         $responseMessage = '재생목록 관련 백그라운드 작업들이 큐에 추가되었습니다.';
         if ($resultArray !== null && isset($resultArray['message']) && is_string($resultArray['message'])) {
              $responseMessage = 'Node.js 결과: ' . $resultArray['message'] . ' | ' . $responseMessage;
@@ -366,6 +369,8 @@ class MusicController extends Controller
 
 
         Log::info("updatePlaylist 메소드 종료");
+        // 실제 BPM 업데이트가 완료되지 않았음을 사용자에게 알리거나,
+        // 업데이트 상태를 확인할 수 있는 다른 방법을 제공해야 할 수 있습니다.
         return response($responseMessage)->header('Content-Type', 'text/plain; charset=utf-8');
     }
 
@@ -373,9 +378,10 @@ class MusicController extends Controller
     // 특정 곡의 재생 횟수 증가
     public function updatePlayCount(Request $request)
     {
+        // 요청에서 곡의 고유 식별자(index)를 가져옵니다.
         $index = $request->input('index');
 
-        // index_number 컬럼으로 Song 모델을 찾아 play_count를 1 증가
+        // index_number 컬럼으로 Song 모델을 찾아 play_count를 1 증가시킵니다.
         $song = Song::where('index_number', $index)->first();
 
         if ($song) {
@@ -398,12 +404,12 @@ class MusicController extends Controller
             return response()->json(Song::all());
         }
 
-        // MappingService를 사용하여 검색어 및 관련 별칭을 가져옴옴
+        // MappingService를 사용하여 검색어 및 관련 별칭을 가져옵니다.
         $mapped = $this->mappingService->map($query);
         $reverseMapped = $this->mappingService->reverseMap($query);
         $aliases = $this->mappingService->getAliasesForValue($query);
 
-        // 검색에 사용할 용어 목록을 구성
+        // 검색에 사용할 용어 목록을 구성합니다.
         $searchTerms = array_filter([
             $query,
             $mapped,
@@ -413,7 +419,7 @@ class MusicController extends Controller
 
         $searchTerms = array_unique($searchTerms);
 
-        // 검색 용어를 사용하여 'channel' 또는 'title' 컬럼에서 곡을 검색
+        // 검색 용어를 사용하여 'channel' 또는 'title' 컬럼에서 곡을 검색합니다.
         $songs = Song::where(function($q) use ($searchTerms) {
             foreach ($searchTerms as $term) {
                 $q->orWhere('channel', 'like', "%$term%")
@@ -430,7 +436,7 @@ class MusicController extends Controller
     // 곡 찜 상태 토글 (추가/삭제)
     public function toggleFavorite(Request $request)
     {
-        // 요청에서 곡의 고유 식별자(index)를 가져옴
+        // 요청에서 곡의 고유 식별자(index)를 가져옵니다.
         $songIndex = $request->input('index');
 
         if (is_null($songIndex)) {
@@ -441,7 +447,7 @@ class MusicController extends Controller
         $status = 'error';
         $message = '찜 상태 변경 중 오류 발생';
 
-        // 사용자의 로그인 상태에 따라 찜 정보를 처리
+        // 사용자의 로그인 상태에 따라 찜 정보를 처리합니다.
         if (Auth::check()) {
             $userId = Auth::id();
             // 로그인 사용자: user_favorites 테이블에서 찜 상태 확인 및 토글
@@ -510,6 +516,7 @@ class MusicController extends Controller
     public function listFavorites(Request $request)
     {
         // Note: 이 메소드는 현재 IP 기반 찜 목록만 반환합니다.
+        // 로그인 사용자의 찜 목록을 가져오려면 별도의 메소드를 만들거나 이 메소드에 로그인 분기 로직을 추가해야 합니다.
         $ip = $request->header('X-Forwarded-For') ?? $request->ip();
         $favorites = Favorite::where('ip_address', $ip)->pluck('song_index')->toArray();
         Log::info("MusicController@listFavorites: IP {$ip} favorites requested.");

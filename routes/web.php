@@ -24,18 +24,10 @@ Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 'Auth\RegisterController@register');
-Route::get('/lyrics/{id}', [LyricsController::class, 'show']);
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// 가사 조회 라우트 추가
-Route::get('/lyrics/{id}', function ($id) {
-    $song = Song::find($id); // Song 모델을 통해 DB에서 노래를 찾음
-    if ($song) {
-        return response()->json(['lyrics' => $song->lyrics]); // 가사 반환
-    } else {
-        return response()->json(['error' => 'Song not found'], 404); // 노래가 없을 경우 오류 반환
-    }
-});
+// 가사 조회 라우트 수정: LyricsController를 통해 가사 조회
+Route::get('/lyrics/{id}', [LyricsController::class, 'show']);

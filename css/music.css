@@ -1,0 +1,972 @@
+/* General Body */
+body, html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(to right, #f9f9f9, #e3eafc);
+    color: #333;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.thumbnail {
+    height: 200px;
+    width: 100%;
+    object-position: center;
+    object-fit: cover;
+  }
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.content {
+    margin-top: 10px; /* Space for header */
+    overflow-y: auto;
+    height: calc(100vh - 70px); /* Full height minus header */
+    padding-top: 80px; /* Avoids header overlap */
+    padding-bottom: 80px;
+    margin-bottom: 100px; /* Space for footer */
+}
+
+/* Playlist */
+.playlist {
+    padding: 20px;
+}
+
+.playlist-item {
+    margin-bottom: 10px;
+}
+
+/* Favorite Button */
+.favorite-btn {
+    color: rgba(211, 211, 211);
+    background: none !important;
+    border: none;
+    outline: none;
+    margin-right: 8px;
+}
+
+.favorite-btn.active i {
+    color: gold;
+}
+
+/* Song Item */
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* scroll-margin-top: 80px; */
+}
+
+.song-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.song-item.current-song {
+    background-color: #f3e8ff; /* Soft lavender */
+    color: #3d1a83; /* Dark purple text */
+}
+
+/* Buttons */
+.do_btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: transparent;
+    width: 32%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 10px 12px; 
+}
+
+.do_btn:focus {
+    outline: none;
+}
+
+h1 {
+    font-size: 1.5em;
+    color: #000000;
+}
+
+#playlistContainer {
+    max-width: 720px;
+    margin: auto;
+    padding: 30px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+li:hover {
+    background-color: #f0f0f0;
+}
+
+li img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+li span {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 80px); /* 예시: 썸네일 너비(60px) + 여백(10px) + 추가 여백(10px) */
+    vertical-align: middle; 
+}
+
+@media (max-width: 400px) {
+    .do_btn {
+        border: solid 5px 6px;
+    }
+}
+
+/* Search Input */
+.search {
+    position: relative;
+    width: 300px;
+}
+
+input {
+    width: 50%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+img {
+    position: absolute;
+    width: 17px;
+    top: 10px;
+    right: 12px;
+    margin: 0;
+}
+
+/* Audio Player */
+#audioPlayerContainer #coverImage {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 15px;
+    position: static;
+}
+
+#audioPlayerContainer {
+    color: black;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* 예시: 고정 높이 */
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 -2px 5px rgb(255, 255, 255);
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+}
+
+#audioInfo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+#songTitle {
+    font-weight: bold;
+    min-width: 0;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0; /* 필요 시 줄어들게 */
+}
+
+
+#audioControls {
+    display: flex;
+    align-items: center;
+}
+
+/* Shuffle & Sequential Buttons */
+#shuffleButton,
+#sequentialButton {
+    font-size: 20px;
+    color: #ff0000;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+    margin-right: 10px;
+}
+
+#shuffleButton:hover,
+#sequentialButton:hover {
+    color: #cc0000;
+}
+
+/* Full-Screen Overlay */
+#fullScreenOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+}
+/* 이미지에 보이는 '가사' 버튼 스타일 (예시 클래스: .lyrics-toggle-button) */
+.lyrics-toggle-button {
+    display: block; /* 블록 요소로 만들어 margin: auto로 가운데 정렬 */
+    margin: 20px auto; /* 위아래 간격 및 좌우 auto로 가운데 정렬 */
+    padding: 10px 20px; /* 버튼 내부 패딩 */
+    color: rgba(0, 0, 0, 0.9); /* 거의 불투명한 흰색 글자색 */
+    border: none; /* 기본 테두리 제거 */
+    border-radius: 25px; /* 둥근 모서리 */
+    cursor: pointer; /* 마우스 오버 시 포인터 모양 변경 */
+    font-size: 1em; /* 글자 크기 */
+    font-weight: bold; /* 글자 굵기 */
+    transition: background-color 0.3s ease, color 0.3s ease; /* 부드러운 전환 효과 */
+    -webkit-backdrop-filter: blur(5px); /* 사파리/크롬 배경 블러 (선택 사항) */
+    backdrop-filter: blur(5px); /* 배경 블러 효과 (선택 사항) */
+    outline: none;          /* 포커스 시 생기는 외곽선 제거 */
+    box-shadow: none;       /* 그림자 제거 */
+    background-color: transparent; /* 배경도 투명하게 설정 (원할 경우) */
+}
+
+.lyrics-toggle-button:hover {
+    background-color: rgba(255, 255, 255, 0.25); /* 호버 시 배경 더 진하게 */
+    color: #fff; /* 호버 시 글자색 완전히 흰색 */
+}
+
+.lyrics-toggle-button:active {
+    background-color: rgba(255, 255, 255, 0.35); /* 클릭 시 배경 더 진하게 */
+}
+
+/* HTML 버튼에 이 클래스를 적용해야 합니다: <button class="lyrics-toggle-button">가사</button> */
+/* 가사 텍스트가 표시될 컨테이너 스타일 */
+.lyrics-container { /* 이전에 #lyricsContainer 였던 요소 */
+    width: 100%;
+    /* 높이는 플레이어 UI의 다른 요소들을 제외한 나머지 높이로 설정 */
+    /* 예: 플레이어 높이 - 커버/컨트롤 영역 높이 */
+    /* 또는 flex 컨테이너 안에서 flex-grow: 1; 로 남은 공간 채우기 */
+    flex-grow: 1; /* 부모 flex 컨테이너에서 남은 공간을 모두 차지 */
+    overflow-y: auto; /* 내용이 넘치면 세로 스크롤 생성 */
+    padding: 20px 15px; /* 상하좌우 패딩 */
+    box-sizing: border-box; /* 패딩을 너비/높이에 포함 */
+    color: #ffffff; /* 또는 #ffffff */
+    font-size: 1.2em; /* 글자 크기 */
+    line-height: 1.8; /* 줄 간격 */
+    text-align: center; /* 가사를 가운데 정렬 */
+    white-space: pre-wrap; /* 줄바꿈 및 공백 유지 */
+
+    /* 처음에는 숨김 (JS로 클래스를 추가하여 보이게 함) */
+    display: none;
+    /* 예: opacity: 0; transition: opacity 0.3s ease; */
+}
+
+/* JS에서 이 클래스를 추가하여 가사 컨테이너를 보이게 한다고 가정 */
+.lyrics-container.active {
+     display: block; /* 또는 flex (부모 레이아웃에 따라) */
+     /* 예: opacity: 1; */
+}
+
+/* 개별 가사 줄 스타일 */
+.lyrics-container p {
+    margin: 15px 0; /* 가사 줄 간격 */
+    transition: color 0.3s ease, font-weight 0.3s ease, transform 0.3s ease; /* 하이라이트 전환 효과 */
+    padding: 0 5px; /* 좌우 살짝 패딩 (하이라이트 시 배경 넣을 경우) */
+}
+
+/* 현재 재생 중인 가사 줄 스타일 */
+.lyrics-container p.active {
+    color: #fff; /* 현재 재생 줄 글자색 (하얗게) */
+    font-weight: bold; /* 현재 재생 줄 글자 굵게 */
+    /* background-color: rgba(255, 255, 255, 0.1); */ /* 현재 재생 줄 배경 (선택 사항) */
+    /* border-radius: 5px; */ /* 배경 선택 시 모서리 둥글게 */
+    /* transform: scale(1.05); */ /* 살짝 확대 효과 (선택 사항) */
+}
+
+body.menu-open #playlistContainer {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+.search-area {
+    position: relative;
+}
+
+#searchInput {
+    width: 0;
+    opacity: 0;
+    transition: width 0.4s ease, opacity 0.4s ease;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: white;
+}
+
+#searchInput.active {
+    width: 200px;
+    opacity: 1;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 20px;
+}
+
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+#sideMenu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    /* padding: 85px 20px 20px 20px; */
+    padding-top: 80px; /* 상단 헤더 높이만큼 여백 */
+    padding-bottom: 65px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    display: flex; /* flexbox 레이아웃 적용 */
+    flex-direction: column; /* 항목들을 세로로 정렬 */
+    justify-content: space-between; /* 주요 메뉴와 하단 섹션 분리 */
+}
+
+#sideMenu.active {
+    left: 0;
+}
+
+#sideMenu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; /* 하단 account-links와의 간격을 위해 margin-bottom 제거 */
+    flex-grow: 1; /* 남은 공간을 차지하여 account-links를 하단으로 밀어냅니다. */
+}
+
+#sideMenu ul li {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#sideMenu ul li:hover {
+    background-color: #e9ecef; /* 호버 시 배경색 변경 */
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+#fullscreenPlayer {
+    display: flex; /* 기본은 숨김 */
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to top, #000000, #2D2A29);
+    z-index: 2000;
+    padding: 0px;
+    overflow: hidden;
+    pointer-events: none;
+    /* 시각적으로 눈에 띄게 */
+    box-sizing: border-box;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    pointer-events: auto; /* 꼭 있어야 함 */
+}
+.fullscreen-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  
+.fullscreen-content {
+    pointer-events: auto; /* 내부 콘텐츠는 클릭 가능하게 */
+  }
+#fullscreenPlayer.active {
+    display: block;
+    opacity: 1;
+  }
+
+#fullscreenPlayer img {
+    max-width: 80%;
+    max-height: 300px;
+    margin: 20px auto;
+    display: block;
+    border-radius: 20px;
+}
+
+
+#fullscreenTitle {
+    font-size: 1.1rem;  
+    font-weight: 600;   
+    margin: 0.5rem 0 0.25rem 0;
+    text-align: left;
+  }
+
+#fullscreenArtist {
+    font-size: 0.9rem;  
+    font-weight: 600;  
+    margin: 0.5rem 0 0.25rem 0;
+    text-align: left;
+    margin-bottom: 1.2rem; /* 싱크바와의 간격 */
+}
+
+
+
+#backButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+#fullscreenCover {
+    position: static !important;
+    display: block;
+    margin: 20px auto;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .fullscreen-wrapper {
+    max-height: 90vh;
+    display: flex;
+    margin-top: 3rem;
+    flex-direction: column;
+    justify-content: center;  /* 수직 정렬 */
+    align-items: center;      /* 수평 정렬 */
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  
+  .song-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ← 텍스트를 왼쪽으로 붙임 */
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+.song-details h2 {
+    font-size: 26px;
+    margin: 10px 0 5px;
+    color: white;
+}
+
+.song-details p {
+    font-size: 18px;
+    margin: 0;
+    color: #ddd;
+}
+
+.time-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 시간과 seekbar 사이 간격 */
+    width: 100%;
+    padding: 0 16px;
+  }
+
+.time-bar input[type="range"] {
+    flex-grow: 1;
+    appearance: none;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+}
+
+.time-bar span {
+    font-size: 14px;
+    color: #ccc;
+    white-space: nowrap;
+  }
+
+.controls.new-style {
+    margin-top: 80px; /* 버튼만 아래로 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+.controls.new-style button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.controls.new-style button:hover {
+    transform: scale(1.2);
+}
+
+.next-track-label {
+    font-size: 14px;
+    color: #888;
+    margin-top: 190px;
+}
+.control-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 0 50px; /* 좌우 간격 */
+  }
+  .control-btn:hover {
+    transform: scale(1.1);
+  }
+  .control-btn.main-btn {
+    background-color: white;          /* 항상 흰색 배경 */
+    color: black;                     /* 아이콘은 검정 */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: none;
+    transition: transform 0.2s ease;
+  }
+
+.control-btn.main-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.time-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #ccc; /* 유튜브 뮤직 스타일 회색 */
+    margin-top: -10px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+    flex: 1;
+    height: 4px;
+    background: transparent;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+  
+    /* 없애기: 브라우저 기본 테두리 */
+    box-shadow: none;
+  }
+  
+  /* Webkit - 트랙 (전체 바) */
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    background: linear-gradient(to right, white var(--progress, 0%), #444 var(--progress, 0%));
+  }
+  
+  /* Webkit - 슬라이더 핸들 (동그라미) */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    margin-top: -4px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  
+  /* Firefox - 트랙 */
+  input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+  }
+  input[type="range"]::-moz-range-progress {
+    height: 4px;
+    background: white;
+    border-radius: 2px;
+  }
+  
+  /* Firefox - 핸들 */
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  
+  .close-fullscreen-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    color: white;
+    font-size: 24px;
+    border-radius: 50%;
+    padding: 8px 10px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s ease;
+  }
+  
+  .close-fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .fullscreen-player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 */
+    align-items: center;      /* 수평 중앙 */
+    height: 100vh;            /* 전체 높이 */
+    width: 100vw;             /* 전체 너비 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000;   /* 배경색은 상황에 맞게 */
+    z-index: 9999;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .fullscreen-player img {
+    max-width: 80vw;
+    max-height: 40vh;
+    object-fit: contain;
+    margin-bottom: 2rem;
+  }
+  
+  .fullscreen-player .controls {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .cover-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+  
+  .track-title {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .artist-name {
+    font-size: 1rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .audio-controls {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .account-links {
+    padding: 20px; /* 상하좌우 패딩 */
+    background-color: #e9ecef; /* 약간 더 어두운 배경색으로 구분 */
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    gap: 10px; /* 버튼들 사이 간격 */
+    flex-shrink: 0; /* .account-links 섹션이 줄어들지 않도록 설정 */
+}
+
+.sidebar-account-btn {
+    display: block;
+    padding: 10px 15px;
+    background-color: #fafafa;
+    color: rgb(2, 1, 1);
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    font-size: 0.9em;
+}
+
+.sidebar-account-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.sidebar-account-btn i {
+    margin-right: 8px;
+}
+
+.logged-in-user {
+    display: block;
+    padding: 10px 15px;
+    text-align: center;
+    color: #495057;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+/* fullscreen.css 또는 music.css 파일에 추가 */
+
+/* '가사' 버튼에 포커스가 갔을 때 생기는 기본 테두리 제거 */
+.fullscreen-tabs .tab-button:focus {
+    outline: none; /* 포커스 시 기본 테두리 제거 */
+    box-shadow: none; /* Bootstrap 등의 box-shadow도 함께 제거 (필요시) */
+}
+
+/* 혹시 모를 부모 div의 테두리/그림자 확인 (없으면 무시) */
+.fullscreen-tabs {
+    border: none !important; /* 부모 컨테이너 테두리 제거 */
+    outline: none !important; /* 부모 컨테이너 아웃라인 제거 */
+    box-shadow: none !important; /* 부모 컨테이너 그림자 제거 */
+}
+
+/* 기존 버튼 스타일과 합칠 경우 */
+.fullscreen-tabs .tab-button {
+    /* ... 기존 버튼 스타일 ... */
+    border: none; /* 이미 있음 */
+    border-radius: 25px; /* 이미 있음 */
+    /* ... 다른 스타일 ... */
+
+    /* 포커스 스타일 추가 */
+    outline: none; /* ⭐ 이 부분을 추가합니다. */
+    box-shadow: none; /* ⭐ 이 부분을 추가합니다. (Bootstrap 등의 영향 방지) */
+}
+
+/* music.css 파일에 추가 또는 수정 */
+
+/* 풀스크린 플레이어 활성화 상태일 때, 탭 버튼 자체의 아웃라인/그림자/테두리 강제 제거 */
+#fullscreenPlayer.active .fullscreen-tabs .tab-button {
+    outline: none !important; /* 포커스 시 아웃라인 강제 제거 */
+    box-shadow: none !important; /* 그림자 강제 제거 */
+    border: none !important; /* 테두리 강제 제거 */
+}
+
+/* 풀스크린 플레이어 활성화 상태일 때, 탭 버튼의 포커스 상태에 대한 아웃라인/그림자/테두리 강제 제거 */
+#fullscreenPlayer.active .fullscreen-tabs .tab-button:focus {
+    outline: none !important; /* 포커스 상태 아웃라인 강제 제거 */
+    box-shadow: none !important; /* 포커스 상태 그림자 강제 제거 */
+    border: none !important; /* 포커스 상태 테두리 강제 제거 */
+}
+
+/* 풀스크린 플레이어 활성화 상태일 때, 탭 버튼을 감싸는 div (.fullscreen-tabs)의 아웃라인/그림자/테두리 강제 제거 */
+#fullscreenPlayer.active .fullscreen-tabs {
+    border: none !important; /* 부모 컨테이너 테두리 강제 제거 */
+    outline: none !important; /* 부모 컨테이너 아웃라인 강제 제거 */
+    box-shadow: none !important; /* 부모 컨테이너 그림자 강제 제거 */
+}
+.btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;  /* 버튼 클릭 시 발생하는 그림자 제거 */
+}
+/* player-ui.js에서 사용하는 가사 컨테이너 스타일 */
+/* player-ui.js에서 사용하는 가사 컨테이너 스타일 */
+#lyricsContainer {
+    /* JS에서 설정한 기본 스타일 (위치, 크기, 배경, 색상 등) */
+    position: absolute;
+    top: 150px; /* JS에서 설정한 값과 동일하게 */
+    left: 20px;  /* JS에서 설정한 값과 동일하게 */
+    right: 20px; /* JS에서 설정한 값과 동일하게 */
+    max-height: 400px; /* JS에서 설정한 값과 동일하게 */
+    overflow-y: auto;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.95);
+    color: white !important; /* JS에서 설정한 값과 동일하게 */
+    z-index: 10; /* 다른 요소 위로 올라오게 */
+
+    /* 트랜지션 속성 (펼쳐지고 사라지는 애니메이션) */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* JS에서 설정한 값과 동일하게 */
+    /* height 애니메이션을 원하면 height도 추가 가능하나, max-height와 overflow-y 때문에 opacity/transform이 더 자연스러울 수 있음 */
+    /* transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, height 0.3s ease-in-out; */
+
+    /* 스크롤바 스타일 (선택 사항) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255) transparent;
+}
+
+#lyricsContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+#lyricsContainer::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+#lyricsContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* JS에서 사용하는 숨김 상태 클래스 */
+/* 초기 상태 및 숨길 때 display: none으로 완전히 공간을 없앰 */
+#lyricsContainer.hidden {
+    opacity: 0;
+    transform: translateY(20px); /* 아래로 살짝 내린 상태 */
+    pointer-events: none; /* 클릭 이벤트 방지 */
+    /* display: none; 은 JS에서 transitionend 이벤트 후 적용 */
+}
+
+/* JS에서 사용하는 보임 상태 클래스 */
+#lyricsContainer.visible {
+    opacity: 1;
+    transform: translateY(0); /* 원래 위치 */
+    pointer-events: auto; /* 클릭 이벤트 허용 */
+    /* display: block; 은 JS에서 보이게 할 때 적용 */
+}
+
+/* 가사 텍스트 포맷팅 */
+#lyricsContainer pre {
+    margin: 0; /* pre 태그 기본 마진 제거 */
+    white-space: pre-wrap; /* 긴 줄바꿈 처리 */
+    word-wrap: break-word; /* 단어가 길면 강제 줄바꿈 */
+    font-family: inherit; /* 부모 폰트 상속 */
+    color: white; /* 가사 글자색을 하얗게 강제 지정 */
+}
+
+.lyrics-line.active {
+    background-color: white !important; /* 또는 #fff */
+    color: rgb(255, 255, 255) !important; /* 텍스트가 검정으로 잘 보이게 */
+}
+.lyric-line {
+    margin-bottom: 10px; /* 가사 라인 간 간격 */
+    padding: 5px; /* 클릭 가능 영역 확보 및 보기 좋게 */
+    transition: color 0.2s ease-in-out; /* 색상 변경 시 애니메이션 */
+    color: rgba(255, 255, 255, 0.6); /* 기본 텍스트 색상 (살짝 투명하게) */
+    cursor: pointer; /* 가사 라인 클릭 시 현재 위치로 이동 기능 고려 */
+}
+
+/* 현재 재생 중인 가사 라인 강조 스타일 */
+.lyric-line.highlighted-lyric {
+    color: rgba(255, 255, 255, 1); /* 강조 색상 (불투명 흰색) */
+    font-weight: bold; /* 강조 시 글씨 두껍게 (선택 사항) */
+    /* background-color: rgba(255, 255, 255, 0.1); /* 강조 시 배경색 (선택 사항) */
+}
+
+/* 스크롤바 스타일 (필요시 커스터마이징) */
+#lyricsContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#lyricsContainer::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+#lyricsContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+#lyricsContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* 필요에 따라 풀스크린 플레이어 내 다른 요소와의 레이아웃 조정 필요 */
+/* 예: 가사 영역이 나타났을 때 다른 요소들이 어떻게 배치될지 flexbox 등으로 조정 */
+/* fullscreenPlayer가 flex container라면 가사 컨테이너를 flex item으로 만들고
+   위치 및 크기 조정을 flex 속성으로 처리하는 것이 더 유연할 수 있습니다. */
