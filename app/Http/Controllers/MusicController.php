@@ -265,54 +265,45 @@ class MusicController extends Controller
         Log::info("--- 원본 출력 끝 ---");
 
         $resultArray = null;
+
+        // JSON 전체 파싱 시도
         $jsonString = trim($output);
         $resultArray = json_decode($jsonString, true);
 
-         // JSON 파싱 및 추출 로직 (기존 코드 유지)
         if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::warning("Node.js 스크립트 출력 전체 JSON 파싱 실패: " . json_last_error_msg() . ". JSON 블록 추출 시도.");
+            Log::warning("Node.js 출력 전체 JSON 파싱 실패: " . json_last_error_msg());
 
+            // JSON 블록 추출 시도
             $jsonStart = strpos($output, '{');
-            $jsonArrayStart = strpos($output, '[');
-            if ($jsonStart === false && $jsonArrayStart === false) {
-                // JSON 시작 문자를 찾지 못함
-                Log::error("Node.js 스크립트 출력에서 JSON 시작 문자 ({ 또는 [)를 찾지 못했습니다.");
-                $resultArray = null;
-            } else {
-                if ($jsonStart === false) $jsonStart = $jsonArrayStart;
-                if ($jsonArrayStart === false) $jsonArrayStart = $jsonStart;
-                $actualJsonStart = min($jsonStart, $jsonArrayStart);
+            $jsonEnd = strrpos($output, '}');
 
-                $jsonEnd = strrpos($output, '}');
-                $jsonArrayEnd = strrpos($output, ']');
-                if ($jsonEnd === false && $jsonArrayEnd === false) {
-                    Log::error("Node.js 스크립트 출력에서 JSON 끝 문자 (} 또는 ])를 찾지 못했습니다.");
+            if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
+                $jsonString = substr($output, $jsonStart, $jsonEnd - $jsonStart + 1);
+                Log::info("JSON 블록 추출 성공 (위치: {$jsonStart} ~ {$jsonEnd}):\n" . $jsonString);
+
+                $resultArray = json_decode($jsonString, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    Log::error("추출된 JSON 파싱 실패: " . json_last_error_msg());
                     $resultArray = null;
                 } else {
-                    if ($jsonEnd === false) $jsonEnd = $jsonArrayEnd;
-                    if ($jsonArrayEnd === false) $jsonArrayEnd = $jsonEnd;
-                    $actualJsonEnd = max($jsonEnd, $jsonArrayEnd);
-                    if ($actualJsonStart !== false && $actualJsonEnd !== false && $actualJsonEnd > $actualJsonStart) {
-                        $jsonString = substr($output, $actualJsonStart, $actualJsonEnd - $actualJsonStart + 1);
-                        Log::info("JSON 블록 추출 성공:\n" . $jsonString);
-                        $resultArray = json_decode($jsonString, true);
-
-                        if (json_last_error() !== JSON_ERROR_NONE) {
-                            Log::error("추출된 JSON 블록 파싱 실패: " . json_last_error_msg());
-                            $resultArray = null;
-                        } else {
-                            Log::info("추출된 JSON 블록 파싱 성공.");
-                            // Log::info("Parsed resultArray (extracted): " . json_encode($resultArray)); // 파싱 결과 확인 (필요시 활성화)
-                        }
-                    } else {
-                        Log::error("JSON 시작/끝 위치 관계가 올바르지 않습니다. 추출 실패.");
-                        $resultArray = null;
-                    }
+                    Log::info("추출된 JSON 파싱 성공: " . json_encode($resultArray));
                 }
+            } else {
+                Log::error("출력에서 JSON 블록 시작/끝을 찾을 수 없습니다.");
             }
         } else {
-            // trim된 출력 전체 파싱 성공 시
-            Log::info("Node.js 스크립트 출력 전체 JSON 파싱 성공 (trim 후).");
+            Log::info("Node.js 출력 전체 JSON 파싱 성공.");
+        }
+
+        // log 존재 여부 직접 로깅
+        if (is_array($resultArray)) {
+            if (!array_key_exists('log', $resultArray)) {
+                Log::warning("'log' 키가 파싱된 JSON 내에 존재하지 않습니다. 전체 결과: " . json_encode($resultArray));
+            } elseif (!is_array($resultArray['log'])) {
+                Log::warning("'log'는 존재하지만 배열 형식이 아닙니다: " . print_r($resultArray['log'], true));
+            } else {
+                Log::info("'log' 키 포함 확인 완료. 개수: " . count($resultArray['log']));
+            }
         }
          // --- Node.js 스크립트 실행 부분 끝 ---
 
@@ -337,7 +328,7 @@ class MusicController extends Controller
                           GenerateSquareThumbnail::dispatch($song); // 썸네일 Job 디스패치
                           $processedVideoIDs[] = $videoID;
                           Log::info("썸네일 생성 Job 디스패치됨 (videoID: {$videoID}, 제목: {$song->title})");
-                      } // else { Log::info("썸네일 파일이 이미 존재합니다. 건너뜀 (videoID: {$videoID})"); }
+                      }  //else { Log::info("썸네일 파일이 이미 존재합니다. 건너뜀 (videoID: {$videoID})"); }
                   }
               } else {
                   Log::info("스크립트 결과 'log' 배열이 비어 있습니다. 썸네일 Job 디스패치 대상 없음.");

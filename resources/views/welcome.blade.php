@@ -6,7 +6,6 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('CSS/music.css?r=7') }}">
 <link rel="stylesheet" href="{{ asset('CSS/bootstrap.css?r=2') }}">
-<!-- <link rel="stylesheet" href="{{ asset('CSS/style.css?r=1') }}"> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -17,15 +16,16 @@
     <ul>
         <li onclick="window.showMain()">메인</li>
         <li onclick="window.showFavorites()">찜 곡</li>
+        <li onclick="window.showMostPlayed()">재생 횟수 (오름차순)</li> 
         <li onclick="window.updatePlaylist()">재생목록 업데이트</li>
     </ul>
     <div class="account-links">
         @guest
             <a href="{{ route('login') }}" class="sidebar-account-btn">
-                 <i class="fas fa-sign-in-alt"></i> 로그인
+                     <i class="fas fa-sign-in-alt"></i> 로그인
             </a>
             <a href="{{ route('register') }}" class="sidebar-account-btn">
-                 <i class="fas fa-user-plus"></i> 회원가입
+                     <i class="fas fa-user-plus"></i> 회원가입
             </a>
         @else
             <span class="logged-in-user">안녕하세요, {{ Auth::user()->name }}님!</span>
@@ -40,7 +40,6 @@
         @endguest
     </div>
 </div>
-
 
 <div id="playlistContainer">
     <div class="header mb-3">
@@ -105,7 +104,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('CSS/jquery-3.6.4.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" async=""></script>
+<script src="{{ asset('CSS/JS/jquery-3.6.4.js') }}"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
@@ -210,16 +210,23 @@ document.addEventListener('DOMContentLoaded', function () {
             rightDiv.style.flexShrink = '0'; // 오른쪽 요소 크기 고정
 
             const thumbnail = document.createElement('img');
-            thumbnail.src = `https://i.ytimg.com/vi/${song.videoID}/maxresdefault.jpg`; // 유튜브 썸네일
+            // lazyload 클래스 추가 및 src 대신 data-src 사용
+            thumbnail.className = 'lazyload';
+            thumbnail.dataset.src = `https://localhost:8000/storage/thumbnails/square/${song.videoID}.jpg`;
             thumbnail.alt = `${song.title} 썸네일`;
             thumbnail.style.width = '50px';
             thumbnail.style.height = '50px';
             thumbnail.style.borderRadius = '5px';
             thumbnail.style.objectFit = 'cover';
             thumbnail.style.display = 'block';
+
+            // placeholder 이미지를 즉시 로드 (선택 사항)
+            // thumbnail.src = '/storage/thumbnails/square/default_placeholder.png'; // 작은 용량의 기본 이미지 또는 로딩 스피너 이미지
+
             thumbnail.onerror = function() {
-                this.src = '/images/default_thumbnail.png'; // 기본 이미지 경로
-                console.warn(`renderSongs: 썸네일 로드 실패 (videoID: ${song.videoID})`);
+                // lazyload가 실패하거나 data-src가 없을 때 기본 이미지로 대체
+                this.src = 'https://localhost:8000/storage/thumbnails/square/default_thumbnail.png';
+                console.warn(`renderSongs: 썸네일 로드 실패 (videoID: ${song.videoID}) 또는 LazyLoad 오류`);
             };
 
             rightDiv.appendChild(thumbnail);
@@ -242,10 +249,15 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     window.playSong = function (index) {
         if (index < 0 || index >= window.playlist.length) {
-            console.error('⛔ playSong: 잘못된 인덱스:', index);
+            console.error('⛔ playSong: 잘못된 인덱스 또는 재생 가능한 곡이 없습니다:', index);
             window.currentPlayingSong = null; currentSongOriginalIndex = -1; audioPlayer.pause();
             audioPlayer.src = ""; coverImage.src = ""; songTitle.innerText = "재생 중인 곡 없음"; document.title = "상재의 노래주머니";
             renderSongs(displayedSongs); // 목록 UI 갱신
+            // 플레이리스트에 곡이 있다면 다음 곡으로 시도 (잘못된 인덱스일 경우)
+            if (window.playlist.length > 0 && index !== -1) {
+                console.log('잘못된 인덱스: 다음 곡을 시도합니다.');
+                window.playNext(); // 다음 곡으로 넘어감
+            }
             return;
         }
 
@@ -261,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.currentPlayingSong = song; // 현재 재생 곡 객체 저장
 
         // 썸네일 URL 설정 (백엔드 생성 URL 우선, 없으면 유튜브 URL 사용)
-        const finalThumbnailUrl = song.thumbnail_url || `https://i.ytimg.com/vi/${song.videoID}/maxresdefault.jpg`;
+        const finalThumbnailUrl = song.thumbnail_url || `https://localhost:8000/storage/thumbnails/square/${song.videoID}.jpg`;
         console.log('ℹ️ playSong: 사용할 최종 썸네일 URL:', finalThumbnailUrl);
         coverImage.src = finalThumbnailUrl;
         coverImage.onerror = function() {
@@ -292,7 +304,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.updateFullscreenUIIfNeeded(song, finalThumbnailUrl);
                 }
             }).catch(err => {
-                console.error(`❌ 'playSong: '${song.title}' 재생 실패:`, err);
+                console.error(`❌ playSong: '${song.title}' 재생 실패:`, err);
+                // 재생 실패 시 다음 곡으로 자동으로 넘어감
+                console.log('재생 실패: 다음 곡을 시도합니다.');
+                // window.playNext();
             });
         } else {
             console.warn("playSong: play() 메서드가 Promise를 반환하지 않습니다.");
@@ -340,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // 미디어 컨트롤 핸들러 설정
-            navigator.mediaSession.setActionHandler('previoustrack', playPrevious);
+            navigator.mediaSession.setActionHandler('previoustrack', window.playPrevious);
             navigator.mediaSession.setActionHandler('nexttrack', window.playNext);
             navigator.mediaSession.setActionHandler('play', () => audioPlayer.play().catch(e=>console.error("playSong: 미디어 세션 재생 오류 (Play):", e)));
             navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
@@ -348,50 +363,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // ==========================
     };
 
-    /**
-     * 현재 표시된 목록(displayedSongs) 기준으로 이전 곡을 재생합니다.
-     */
-    function playPrevious() {
-        if (!window.currentPlayingSong || displayedSongs.length === 0) {
-            console.log('playPrevious: 재생 중인 곡이 없거나 목록이 비어있습니다.');
-            return; // 재생할 곡 없음
-        }
-
-        // 현재 재생 중인 곡이 displayedSongs 목록에서 몇 번째인지 찾음 (DB 인덱스 기준)
-        const currentDisplayedIndex = displayedSongs.findIndex(song => song.index === window.currentPlayingSong.index);
-
-        if (currentDisplayedIndex === -1) {
-            console.warn('playPrevious: 현재 재생 중인 곡이 현재 표시된 목록에 없습니다.');
-            // 첫 곡을 재생하거나, 재생 중지 등 정책 결정 필요
-            if (displayedSongs.length > 0) {
-                const firstOriginalIndex = window.playlist.findIndex(s => s.index === displayedSongs[0].index);
-                if (firstOriginalIndex !== -1) window.playSong(firstOriginalIndex);
-            }
-            return;
-        }
-
-        let prevDisplayedIndex = currentDisplayedIndex - 1;
-        if (prevDisplayedIndex < 0) {
-            prevDisplayedIndex = displayedSongs.length - 1; // 목록 처음으로 순환
-        }
-
-        // 이전 곡 객체 (displayedSongs 기준)
-        const prevSongObject = displayedSongs[prevDisplayedIndex];
-        // 이전 곡의 원본 플레이리스트(window.playlist) 인덱스를 찾음
-        const prevOriginalIndex = window.playlist.findIndex(song => song.index === prevSongObject.index);
-
-        if (prevOriginalIndex === -1) {
-            console.error('playPrevious: 이전 곡의 원본 index를 찾을 수 없습니다.');
-            return;
-        }
-
-        // 찾은 원본 인덱스로 재생 함수 호출
-        window.playSong(prevOriginalIndex);
-    };
-
-    /**
-     * 현재 표시된 목록(displayedSongs) 기준으로 다음 곡을 재생합니다.
-     */
     window.playNext = function () {
         if (!window.currentPlayingSong || displayedSongs.length === 0) {
              console.log('playNext: 재생 중인 곡이 없거나 목록이 비어있습니다.');
@@ -440,9 +411,82 @@ document.addEventListener('DOMContentLoaded', function () {
         // 찾은 원본 인덱스로 재생 함수 호출
         window.playSong(nextOriginalIndex);
     };
+// window.playNext = function () {
+//     // 오류로 인해 호출될 때 displayedSongs가 필터링된 상태여도,
+//     // 재생은 window.playlist (전체 원본 목록) 기준으로 진행되도록 변경
+//     if (!window.currentPlayingSong || window.playlist.length === 0) {
+//         console.log('playNext: 재생 중인 곡이 없거나 전체 목록이 비어있습니다.');
+//         return;
+//     }
+
+//     // 현재 재생 중인 곡의 원본 인덱스 (currentSongOriginalIndex 사용)
+//     let nextOriginalIndex = currentSongOriginalIndex + 1;
+
+//     // 목록의 끝에 도달했을 때의 처리 (전체 목록 기준으로 순환)
+//     if (nextOriginalIndex >= window.playlist.length) {
+//         console.log('playNext: 전체 목록 마지막 곡 재생 완료. 첫 곡으로 순환.');
+//         nextOriginalIndex = 0;
+//     }
+
+//     // 다음 곡 객체 (window.playlist 기준)
+//     const nextSongObject = window.playlist[nextOriginalIndex];
+
+//     if (!nextSongObject) {
+//         console.error('playNext: 다음 곡 객체를 찾을 수 없습니다 (유효하지 않은 인덱스: ${nextOriginalIndex})');
+//         return;
+//     }
+
+//     // 찾은 원본 인덱스로 재생 함수 호출
+//     window.playSong(nextOriginalIndex);
+// };
+
+window.playPrevious = function () {
+    // playNext와 유사하게 원본 인덱스 기준으로 이전 곡 찾기
+    if (!window.currentPlayingSong || window.playlist.length === 0) {
+        console.log('playPrevious: 재생 중인 곡이 없거나 전체 목록이 비어있습니다.');
+        return;
+    }
+
+    let prevOriginalIndex = currentSongOriginalIndex - 1;
+
+    if (prevOriginalIndex < 0) {
+        console.log('playPrevious: 전체 목록 첫 곡. 마지막 곡으로 순환.');
+        prevOriginalIndex = window.playlist.length - 1;
+    }
+
+    const prevSongObject = window.playlist[prevOriginalIndex];
+    if (!prevSongObject) {
+        console.error('playPrevious: 이전 곡 객체를 찾을 수 없습니다 (유효하지 않은 인덱스: ${prevOriginalIndex})');
+        return;
+    }
+    window.playSong(prevOriginalIndex);
+};
+
 
     // 오디오 재생 완료 시 다음 곡 자동 재생 이벤트 리스너
     audioPlayer.addEventListener('ended', window.playNext);
+
+    // 오디오 재생 중 오류 발생 시 다음 곡 자동 재생 이벤트 리스너 추가
+    audioPlayer.addEventListener('error', function(e) {
+        let errorMessage = '알 수 없는 오디오 재생 오류';
+        switch (e.target.error.code) {
+            case e.target.error.MEDIA_ERR_ABORTED:
+                errorMessage = '사용자가 오디오 다운로드를 중단했습니다.';
+                break;
+            case e.target.error.MEDIA_ERR_NETWORK:
+                errorMessage = '네트워크 오류로 인해 오디오 다운로드가 실패했습니다.';
+                break;
+            case e.target.error.MEDIA_ERR_DECODE:
+                errorMessage = '오디오 재생 중 디코딩 오류가 발생했습니다. (파일 손상 또는 지원되지 않는 형식)';
+                break;
+            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                errorMessage = '오디오 소스를 찾을 수 없거나 지원되지 않는 형식입니다. (404 에러 또는 이미지 파일 등)';
+                break;
+        }
+        console.error(`❌ Audio Error: ${errorMessage}`, e.target.error);
+        console.error(`🚨 현재 곡 재생 중 오류 발생: ${errorMessage}\n다음 곡으로 넘어갑니다.`);
+        window.playNext(); // 오류 발생 시 다음 곡 재생
+    });
 
     /**
      * 곡의 찜 상태를 토글합니다. (서버와 통신)
@@ -467,20 +511,20 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(res => {
             if (!res.ok) {
-                 // CSRF 토큰 만료 에러 처리
-                 if (res.status === 419) {
-                      alert('세션이 만료되었습니다. 페이지를 새로고침 해주세요.');
-                      location.reload(); // 페이지 새로고침
-                      throw new Error('CSRF token mismatch'); // 에러 발생시켜 .catch로 이동
-                 }
+                // CSRF 토큰 만료 에러 처리
+                if (res.status === 419) {
+                    alert('세션이 만료되었습니다. 페이지를 새로고침 해주세요.');
+                    location.reload(); // 페이지 새로고침
+                    throw new Error('CSRF token mismatch'); // 에러 발생시켜 .catch로 이동
+                }
                 throw new Error(`toggleFavorite: 서버 응답 오류: ${res.status}`);
             }
             // 응답 본문이 있는지, JSON 형식인지 확인
             const contentType = res.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
-                 return res.json();
+                return res.json();
             } else {
-                 throw new Error('toggleFavorite: 잘못된 서버 응답 형식 (JSON 필요)');
+                throw new Error('toggleFavorite: 잘못된 서버 응답 형식 (JSON 필요)');
             }
         })
         .then(data => {
@@ -495,7 +539,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     favoritedIndexes.delete(numSongIndex); // 찜 Set에서 제거
                     buttonElement.classList.remove('active');
                     buttonElement.innerHTML = '<i class="far fa-star"></i>'; // 아이콘 변경
-                     console.log(`toggleFavorite: ${numSongIndex} 찜 제거됨`);
+                    console.log(`toggleFavorite: ${numSongIndex} 찜 제거됨`);
                 } else {
                     // 예상치 못한 status 값 처리
                     console.error('toggleFavorite: 알 수 없는 상태값:', data.status);
@@ -503,17 +547,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 // 필요하다면 여기서 window.playlist 데이터 모델의 is_favorite 같은 속성도 업데이트 할 수 있음
             } else {
-                 // 응답 데이터 형식이 잘못된 경우
-                 console.error('toggleFavorite: 서버 응답에 status 문자열 없음 또는 형식 오류:', data);
-                 alert('찜 상태 변경 중 서버 응답 형식 오류가 발생했습니다.');
+                // 응답 데이터 형식이 잘못된 경우
+                console.error('toggleFavorite: 서버 응답에 status 문자열 없음 또는 형식 오류:', data);
+                alert('찜 상태 변경 중 서버 응답 형식 오류가 발생했습니다.');
             }
         })
         .catch(error => {
-             // CSRF 오류 시 이미 reload 했으므로 추가 alert 방지
-             if (error.message !== 'CSRF token mismatch') {
-                  console.error(`❌ toggleFavorite (${songIndex}) 처리 실패:`, error);
-                  alert('찜 상태 변경에 실패했습니다.');
-             }
+            // CSRF 오류 시 이미 reload 했으므로 추가 alert 방지
+            if (error.message !== 'CSRF token mismatch') {
+                console.error(`❌ toggleFavorite (${songIndex}) 처리 실패:`, error);
+                alert('찜 상태 변경에 실패했습니다.');
+            }
         });
     }
 
@@ -524,8 +568,8 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function updatePlayCount_ImmediateUI(songUniqueIndex, originalIndex) {
         if (typeof songUniqueIndex === 'undefined' || originalIndex < 0 || originalIndex >= window.playlist.length) {
-             console.error('updatePlayCount_ImmediateUI: 잘못된 인덱스 또는 정보 부족.', { songUniqueIndex, originalIndex });
-             return;
+            console.error('updatePlayCount_ImmediateUI: 잘못된 인덱스 또는 정보 부족.', { songUniqueIndex, originalIndex });
+            return;
         }
 
         const songDiv = document.getElementById(`song-${originalIndex}`);
@@ -544,12 +588,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 targetSongInData.play_count = localCount; // 데이터 모델 업데이트 (다음 렌더링 시 반영 위함)
                 console.log(`updatePlayCount_ImmediateUI: UI/Data 업데이트 - 곡 Index: ${songUniqueIndex}, 새 재생 수: ${localCount}`);
             } else {
-                 console.warn('updatePlayCount_ImmediateUI: 재생 횟수 뱃지 요소를 찾을 수 없습니다.', { songUniqueIndex, originalIndex });
+                console.warn('updatePlayCount_ImmediateUI: 재생 횟수 뱃지 요소를 찾을 수 없습니다.', { songUniqueIndex, originalIndex });
             }
         } else {
-             console.warn('updatePlayCount_ImmediateUI: 해당 곡의 UI 요소 또는 데이터 모델을 찾을 수 없습니다.', { songUniqueIndex, originalIndex });
-             // UI 요소나 데이터가 없으면 서버 요청도 의미 없을 수 있으므로 여기서 중단할 수도 있음
-             // return;
+            console.warn('updatePlayCount_ImmediateUI: 해당 곡의 UI 요소 또는 데이터 모델을 찾을 수 없습니다.', { songUniqueIndex, originalIndex });
+            // UI 요소나 데이터가 없으면 서버 요청도 의미 없을 수 있으므로 여기서 중단할 수도 있음
+            // return;
         }
 
         // 2. 서버에 재생 수 업데이트 비동기 요청
@@ -568,27 +612,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(`updatePlayCount_ImmediateUI: 서버 응답 오류: ${res.status}`);
             }
             const contentType = res.headers.get("content-type");
-             if (contentType && contentType.indexOf("application/json") !== -1) {
+            if (contentType && contentType.indexOf("application/json") !== -1) {
                 return res.json();
-             } else {
-                 // JSON 응답이 아니어도 성공으로 간주할 수 있음 (예: 204 No Content)
-                 console.warn('updatePlayCount_ImmediateUI: 서버가 JSON이 아닌 성공 응답을 반환했습니다.');
+            } else {
+                // JSON 응답이 아니어도 성공으로 간주할 수 있음 (예: 204 No Content)
+                console.warn('updatePlayCount_ImmediateUI: 서버가 JSON이 아닌 성공 응답을 반환했습니다.');
                 return null;
-             }
+            }
         })
         .then(data => {
-             // 서버로부터 성공 메시지 등 추가 정보가 있다면 로그 기록
-             if (data && data.message) {
-                  console.log('updatePlayCount_ImmediateUI: 서버 업데이트 성공 메시지:', data.message);
-             } else {
-                  console.log(`updatePlayCount_ImmediateUI: 서버 업데이트 성공 (인덱스: ${songUniqueIndex})`);
-             }
+            // 서버로부터 성공 메시지 등 추가 정보가 있다면 로그 기록
+            if (data && data.message) {
+                console.log('updatePlayCount_ImmediateUI: 서버 업데이트 성공 메시지:', data.message);
+            } else {
+                console.log(`updatePlayCount_ImmediateUI: 서버 업데이트 성공 (인덱스: ${songUniqueIndex})`);
+            }
         })
         .catch(error => {
             // 네트워크 오류 또는 서버 오류 응답 처리
             console.error(`❌ updatePlayCount_ImmediateUI (${songUniqueIndex}) 처리 실패:`, error.message);
-             // 사용자에게 알림을 줄 수도 있음 (선택 사항)
-             // alert('재생 횟수 업데이트에 실패했습니다.');
+            // 사용자에게 알림을 줄 수도 있음 (선택 사항)
+            // alert('재생 횟수 업데이트에 실패했습니다.');
         });
     }
 
@@ -609,7 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(res => {
                     if (!res.ok) throw new Error(`search: 검색 실패: ${res.status}`);
                     return res.json();
-                 })
+                })
                 .then(results => {
                     // 서버 결과(DB 인덱스 목록)를 바탕으로 window.playlist에서 곡 객체를 찾아 새 목록 생성
                     // 서버 응답 형식이 { index_number: xxx, ... } 형태라고 가정
@@ -627,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     renderSongs(displayedSongs); // 빈 목록 렌더링 (오류 메시지 표시 위함)
                 });
         });
-     }
+    }
 
     // === 사이드 메뉴 관련 함수 ===
     window.toggleMenu = function () {
@@ -639,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSongs(displayedSongs);
         if (searchInput) searchInput.value = ''; // 검색창 초기화
         toggleMenu(); // 메뉴 닫기
-     };
+    };
 
     window.showFavorites = function () {
         // 찜 목록 필터링 (favoritedIndexes Set 사용, song.index 기준)
@@ -649,17 +693,31 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleMenu(); // 메뉴 닫기
     };
 
+    // 새로 추가할 함수
+    window.showMostPlayed = function () {
+        // window.playlist를 복사하여 정렬 (원본 데이터는 유지)
+        displayedSongs = [...window.playlist].sort((a, b) => {
+            const playCountA = parseInt(a.play_count) || 0;
+            const playCountB = parseInt(b.play_count) || 0;
+            return playCountA - playCountB; // 오름차순 정렬 (적게 재생된 순)
+        });
+        renderSongs(displayedSongs);
+        if (searchInput) searchInput.value = ''; // 검색창 초기화
+        toggleMenu(); // 메뉴 닫기
+        console.log("재생 횟수 순으로 정렬되었습니다.");
+    };
+
     window.updatePlaylist = function () {
         alert("🔄 재생목록을 업데이트 중입니다...");
         toggleMenu(); // 메뉴 닫기
         fetch("/update-playlist")
             .then(res => {
                 if (!res.ok) {
-                     if (res.status === 419) { // CSRF 토큰 오류
-                          alert('세션이 만료되었습니다. 페이지를 새로고침 해주세요.');
-                          location.reload();
-                          throw new Error('CSRF token mismatch');
-                     }
+                    if (res.status === 419) { // CSRF 토큰 오류
+                        alert('세션이 만료되었습니다. 페이지를 새로고침 해주세요.');
+                        location.reload();
+                        throw new Error('CSRF token mismatch');
+                    }
                     throw new Error(`updatePlaylist: 서버 응답 오류: ${res.status}`);
                 }
                 // 성공 시 응답 본문이 있다면 텍스트로 읽기 (없을 수도 있음)
@@ -684,12 +742,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 플레이리스트에 곡이 있을 경우 첫 곡 자동 재생
     if (window.playlist.length > 0) {
-       window.playSong(0);
+        window.playSong(0);
     } else {
-       // 곡이 없을 경우 메시지 표시
-       songTitle.innerText = "재생 목록이 비어 있습니다.";
-       document.title = "상재의 노래주머니";
-       coverImage.src = '/images/default_thumbnail.png'; // 기본 이미지 표시
+        // 곡이 없을 경우 메시지 표시
+        songTitle.innerText = "재생 목록이 비어 있습니다.";
+        document.title = "상재의 노래주머니";
+        coverImage.src = '/images/default_thumbnail.png'; // 기본 이미지 표시
     }
 
     // 전체 곡 개수 표시 업데이트

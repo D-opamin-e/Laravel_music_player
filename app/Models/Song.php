@@ -9,5 +9,5 @@ class Song extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'channel', 'BPM']; // 필드 정의
+    protected $fillable = ['title', 'channel', 'BPM', 'videoID']; // 필드 정의
 }
