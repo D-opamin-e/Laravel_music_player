@@ -8,6 +8,14 @@
 <h2>📌 수정 내역</h2>
 
 <details>
+  <summary><strong>2025-08-07</strong></summary>
+  <ul>
+      <li>➕ <strong>ADD</strong>: 재생 횟수(오름차순) 정렬 기능 추가</li>
+       <li>🛠️ <strong>Fixed</strong>: 음악 재생 관련, 404 혹은 부가 에러에 관련 대응 코드 추가</li>
+  </ul>
+</details>
+
+<details>
   <summary><strong>2025-05-06</strong></summary>
   <ul>
       <li>➕ <strong>ADD</strong>: python의 whisper와 gemeni를 활용한 가사 싱크 관련 코드</li>
