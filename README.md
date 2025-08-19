@@ -7,6 +7,8 @@
 
 <h2>✨ Laravel_music_player만의 특징</h2>
 <ol>
+<li><strong> 특정 곡 에러 발생시, 대처 방법 </strong><br>
+ - 특정 곡 404 에러 혹은 그 외의 예상치 못한 에러 발생시, MEDIA_ERR_ABORTED,NETWORK,DECODE,SRC_NOT_SUPPORTED 등 관련 대처 코드 추가
 <li><strong> 검색 기능 </strong><br>
  - 가사 혹은 가수로 검색 기능 도입
  <li><strong> 특정 노래 찜 기능</strong><br>
