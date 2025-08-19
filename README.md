@@ -5,6 +5,20 @@
 
 <hr>
 
+<h2>✨ Laravel_music_player만의 특징</h2>
+<ol>
+<li><strong> 검색 기능 </strong><br>
+ - 가사 혹은 가수로 검색 기능 도입
+ <li><strong> 특정 노래 찜 기능</strong><br>
+ 비 회원의 찜 기능 도입<small>ip기반으로 찜을 구분하기에, 회원가입시에 더 명확하게 구분 가능</small>
+ <li><strong> Media Session API 도입 </strong><br>
+사용자가 웹 앱 외부에서도 미디어 제어 동작을 수행할 수 있으며, 잠금화면에서도 미디어 정보를 표시할 수 있고 제어할 수 있는 API를 도입하였음.
+ <li><strong> FullScreenPlayer 가사 관련 코드 </strong><br>
+만약, 특정 곡에 가사가 존재하며, 특정 부분 가사를 클릭시 해당 가사의 부분을 강조 및 재생하며 가사 부분을 재생함.
+
+</ol>
+
+
 <h2>📌 수정 내역</h2>
 
 <details>
