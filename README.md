@@ -1,4 +1,4 @@
-
+a
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 <h2>🎵 Laravel 기반으로 <a href="https://github.com/D-opamin-e/music_player" target="_blank">music_player</a> 리빌드 및 디자인 리뉴얼</h2>
 <p>기존 프로젝트를 <strong>Laravel 프레임워크</strong>로 재구성하고, 전체 UI를 새롭게 디자인하였습니다.</p>
@@ -12,11 +12,11 @@
 <li><strong> 검색 기능 </strong><br>
  - 가사 혹은 가수로 검색 기능 도입
  <li><strong> 특정 노래 찜 기능</strong><br>
- 비 회원의 찜 기능 도입<small>ip기반으로 찜을 구분하기에, 회원가입시에 더 명확하게 구분 가능</small>
+ 비 회원일 경우엔 <small>ip기반으로 구분, 회원가입을 한 유저인 경우엔 id로 더 명확하게 구분 가능</small>
  <li><strong> Media Session API 도입 </strong><br>
 사용자가 웹 앱 외부에서도 미디어 제어 동작을 수행할 수 있으며, 잠금화면에서도 미디어 정보를 표시할 수 있고 제어할 수 있는 API를 도입하였음.
  <li><strong> FullScreenPlayer 가사 관련 코드 </strong><br>
-만약, 특정 곡에 가사가 존재하며, 특정 부분 가사를 클릭시 해당 가사의 부분을 강조 및 재생하며 가사 부분을 재생함.
+곡에 가사가 있다면, 싱크에 맞춰 가사를 강조하고, 원하는 가사를 클릭하면 해당 부분부터 재생합니다.
 
 </ol>
 
